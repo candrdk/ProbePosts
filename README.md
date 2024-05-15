@@ -2,7 +2,7 @@
 Microblogging for UFO hunters.
 
 # How to run
-Clone the repository and ru the following command to install the required packages (preferably in a venv):
+Clone the repository and run the following command to install the required packages (preferably in a venv):
 ```
 $ pip install -r requirements.txt
 ```
