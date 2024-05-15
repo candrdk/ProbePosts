@@ -6,7 +6,7 @@ To run ProbePosts, run the following command from the root of the repository:
 ```
 $ flask run
 ```
-This will start a server on localhost port 5000, which you can view in the browser using the following URL: https://localost:5000/
+This will start a server on localhost port 5000, which you can view in the browser using the following URL: https://localhost:5000/
 
 ## Set up a virtual environment
 > This walkthrough assumes you are running on linux, mac or git bash on windows. Commands will differ slightly on `cmd` and `powershell`.
