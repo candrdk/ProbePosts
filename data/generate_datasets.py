@@ -33,10 +33,10 @@ class Dataset():
     def __init__(self, path):
         self.dataset_path = path
 
-        self.post_attributes = ['id', 'posted', 'date', 'time', 'country', 'state', 'city', 'duration', 'summary', 'img_url', 'lat', 'lng']
+        self.post_attributes = ['poster_id', 'posted', 'date', 'time', 'country', 'state', 'city', 'duration', 'summary', 'img_url', 'lat', 'lng']
         self.city_attributes = ['id', 'name']
         self.state_attributes = ['id', 'name']
-        self.user_attributes = ['id', 'username', 'password_hash', 'country', 'city', 'state']
+        self.user_attributes = ['id', 'username', 'password_hash', 'country', 'state', 'city']
 
         self.city_id = 0
         self.cities = {'Tampa': self.city_id}
@@ -85,8 +85,8 @@ class Dataset():
             'username': username,
             'password_hash': generate_password_hash('dis'),
             'country': 'United States',
-            'city': self.cities[city],
-            'state': self.states[state]
+            'state': self.states[state],
+            'city': self.cities[city]
         })
 
         return self.user_id
@@ -124,9 +124,9 @@ class Dataset():
 
                 # Write the post to the csv file
                 writer.writerow({
-                    'id': poster_id,
+                    'poster_id': poster_id,
                     'posted': date_posted.strftime('%d/%m/%y'),
-                    'date': row['date'],
+                    'date': date_spotted.strftime('%d/%m/%y'),
                     'time': row['time'],
                     'country': 'United States',
                     'state': self.states[row['state']],
@@ -140,7 +140,7 @@ class Dataset():
 
                 print(f'Read post {i}')
 
-                if i > 50:
+                if i > 49:
                     break
 
         with open('states.csv', 'w', newline='', encoding='utf-8') as file:
