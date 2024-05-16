@@ -12,11 +12,11 @@ $ pip install -r requirements.txt
 ```
 Create a new database in pgAdmin (preferably named ProbePosts) and add the following to an `.env` file in the project root:
 ```
-	DB_HOST=localhost
-	DB_PORT=5432
-	DB_NAME=ProbePosts
-	DB_USERNAME=postgres
-	DB_PASSWORD=postgres
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ProbePosts
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 ```
 If these default values don't match your setup (you might for example have a different password), modify the `.env` as needed.
 
