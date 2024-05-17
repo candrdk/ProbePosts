@@ -20,19 +20,19 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
 
         # Load the cities data
         with open('cities.csv', 'r') as f:
-            with cur.copy('''COPY Cities(id, city_name) 
+            with cur.copy('''COPY Cities(city_name) 
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
 
         # Load the states data
         with open('states.csv', 'r') as f:
-            with cur.copy('''COPY States(id, state_name)
+            with cur.copy('''COPY States(state_name)
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
 
         # Load the users data
         with open('users.csv') as f:
-            with cur.copy('''COPY Users(id, username, password_hash, country, state_id, city_id)
+            with cur.copy('''COPY Users(username, password_hash, country, state_id, city_id)
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
         

@@ -34,20 +34,19 @@ class Dataset():
         self.dataset_path = path
 
         self.post_attributes = ['poster_id', 'posted', 'date', 'time', 'country', 'state', 'city', 'duration', 'summary', 'img_url', 'lat', 'lng']
-        self.city_attributes = ['id', 'name']
-        self.state_attributes = ['id', 'name']
-        self.user_attributes = ['id', 'username', 'password_hash', 'country', 'state', 'city']
+        self.city_attributes = ['name']
+        self.state_attributes = ['name']
+        self.user_attributes = ['username', 'password_hash', 'country', 'state', 'city']
 
-        self.city_id = 0
+        self.city_id = 1
         self.cities = {'Tampa': self.city_id}
 
-        self.state_id = 0
+        self.state_id = 1
         self.states = {'FL': self.state_id}
 
-        self.user_id = 0
+        self.user_id = 1
         self.users = [
-            { 
-                'id': self.user_id, 
+            {
                 'username': 'FloridaMan', 
                 'password_hash': generate_password_hash('ProbeMeDaddy'),
                 'country': 'United States', 
@@ -60,7 +59,7 @@ class Dataset():
 
     def get_user_id(self, state, city):
         if state == 'FL':
-            return 0
+            return 1
 
         if state in self.user_locations:
             (max_posts_left, id) = self.user_locations[state]
@@ -81,7 +80,6 @@ class Dataset():
             username = generate_username()[0]
 
         self.users.append({
-            'id': self.user_id,
             'username': username,
             'password_hash': generate_password_hash('dis'),
             'country': 'United States',
@@ -140,24 +138,25 @@ class Dataset():
 
                 print(f'Read post {i}')
 
-                if i > 49:
+                if i > 4:
                     break
 
         with open('states.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.state_attributes)
             writer.writeheader()
-            writer.writerows([{'id': self.states[state], 'name': state} for state in self.states])
-            
+            states_by_id = sorted(self.states, key=self.states.get)
+            writer.writerows([{'name': state} for state in states_by_id])
+
         with open('cities.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.city_attributes)
             writer.writeheader()
-            writer.writerows([{'id': self.cities[city], 'name': city} for city in self.cities])
+            cities_by_id = sorted(self.cities, key=self.cities.get)
+            writer.writerows([{'name': city} for city in cities_by_id])
 
         with open('users.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.user_attributes)
             writer.writeheader()
             writer.writerows(self.users)
-
 
 
 dataset = Dataset('dataset_raw.csv')

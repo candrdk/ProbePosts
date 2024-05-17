@@ -2,11 +2,12 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 
 from urllib.parse import urlsplit
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import app
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
-from app.queries import get_user_by_username
+from app.queries import get_user_by_username, insert_user
 
 @app.route('/')
 @app.route('/index')
@@ -35,7 +36,7 @@ def login():
     if form.validate_on_submit():
         user = get_user_by_username(form.username.data)
 
-        if user is None or not user.check_password(form.password.data):
+        if user is None or not check_password_hash(user.password_hash, form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
 
@@ -62,9 +63,12 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        user = User({'username': form.username.data})
-        user.set_password(form.password.data)
-        # TODO: add to database
+        insert_user(User({
+            'username': form.username.data,
+            'password_hash': generate_password_hash(form.password.data),
+            'country': 'United States'
+        }))
+
         flash('You are now a registered user!')
         return redirect(url_for('login'))
 

@@ -11,17 +11,17 @@ CREATE TABLE Countries(
 INSERT INTO Countries(country_name) VALUES ('United States');
 
 CREATE TABLE Cities(
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     city_name VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE States(
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     state_name VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Users(
-    id INTEGER PRIMARY KEY, 
+    id SERIAL PRIMARY KEY, 
     username VARCHAR(32) UNIQUE NOT NULL, 
     password_hash VARCHAR(256) NOT NULL, 
     country VARCHAR(32) NOT NULL REFERENCES Countries(country_name), 

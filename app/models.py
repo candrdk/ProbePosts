@@ -1,28 +1,20 @@
-from app import login
+from app import login, db
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 
 @login.user_loader
 def load_user(id):
-    # TODO:
-    # query = "SELECT * FROM Users WHERE pk = %s"
-    # db.execute(sql, (id,))
-    # return User(db.fetchone()) if db.rowcount > 0 else None
-    user = User({'username': 'candr', 'pk': id})
-    user.set_password('candr')
-    return user if id == user.id else None
+    db.execute("SELECT * FROM Users WHERE id = %s;", (id,))
+    return User(db.fetchone()) if db.rowcount == 1 else None
 
 class User(UserMixin):
     @property
     def id(self):
-        return self.pk
+        return self.user_id
     
     def __init__(self, user_data):
-        self.pk = user_data.get('pk')
+        self.user_id = user_data.get('id')
         self.username = user_data.get('username')
-    
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        self.password_hash = user_data.get('password_hash')
+        self.country = user_data.get('country')
+        self.state_id = user_data.get('state_id')
+        self.city_id = user_data.get('city_id')
