@@ -3,6 +3,12 @@
 {% block content %}
     <h1>Hello, {{ current_user.username }}!</h1>
     {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    <div>
+        <p>
+            {{ post.poster_username }} posted on {{ post.post_date }} 
+            from {{ post.city }}, {{ post.state }}, {{ post.country }}: <br>
+            {{ post.content }}
+        </p>
+    </div>
     {% endfor %}
 {% endblock %}

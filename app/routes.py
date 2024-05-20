@@ -4,25 +4,17 @@ from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import app
+from app import app, db
 from app.forms import LoginForm, RegistrationForm
-from app.models import User
-from app.queries import get_user_by_username, insert_user
+from app.models import User, Post
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'Alice'},
-            'body': 'Sample post 1.'
-        },
-        {
-            'author': {'username': 'Bob'},
-            'body': 'Sample post 2.'
-        }
-    ]
+    posts_data = db.query_recent_posts(3)
+    print(posts_data)
+    posts = [Post(p) for p in posts_data]
 
     return render_template('index.html', title="Home", posts=posts)
 
@@ -34,7 +26,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = get_user_by_username(form.username.data)
+        user = User(db.query_userdata_by_username(form.username.data))
 
         if user is None or not check_password_hash(user.password_hash, form.password.data):
             flash('Invalid username or password')
@@ -63,16 +55,12 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-
-        state_id = form.state.data
-        city_id = form.city.data
-
-        insert_user(User({
+        db.insert_user(User({
             'username': form.username.data,
             'password_hash': generate_password_hash(form.password.data),
             'country': form.country.data,
-            'state_id': None if state_id == '' else state_id,
-            'city_id':  None if city_id == '' else city_id
+            'state_id': None if form.state.data == '' else form.state.data,
+            'city_id':  None if form.city.data  == '' else form.city.data
         }))
 
         flash('You are now a registered user!')
