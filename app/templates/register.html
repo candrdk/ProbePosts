@@ -26,6 +26,27 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.country.label }} <br>
+            {{ form.country  }}
+            {% for error in form.country.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.state.label }} <br>
+            {{ form.state  }}
+            {% for error in form.state.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.city.label }} <br>
+            {{ form.city  }}
+            {% for error in form.city.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.submit() }}
         </p>
     </form>
