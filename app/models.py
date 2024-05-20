@@ -18,3 +18,6 @@ class User(UserMixin):
         self.country = user_data.get('country')
         self.state_id = user_data.get('state_id')
         self.city_id = user_data.get('city_id')
+    
+    def __str__(self):
+        return f"user: {self.city_id}, {self.state_id}"
