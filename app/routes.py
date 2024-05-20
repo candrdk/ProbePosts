@@ -63,10 +63,16 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
+
+        state_id = form.state.data
+        city_id = form.city.data
+
         insert_user(User({
             'username': form.username.data,
             'password_hash': generate_password_hash(form.password.data),
-            'country': 'United States'
+            'country': form.country.data,
+            'state_id': None if state_id == '' else state_id,
+            'city_id':  None if city_id == '' else city_id
         }))
 
         flash('You are now a registered user!')
