@@ -13,7 +13,6 @@ from app.models import User, Post
 @login_required
 def index():
     posts_data = db.query_recent_posts(3)
-    print(posts_data)
     posts = [Post(p) for p in posts_data]
 
     return render_template('index.html', title="Home", posts=posts)
