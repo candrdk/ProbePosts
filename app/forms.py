@@ -36,14 +36,13 @@ class RegistrationForm(FlaskForm):
         states.append(('', '--'))
         for s in get_states():
             states.append((s['id'], s['state_name']))
-        print(states, flush=True)
         return states
     
     def create_city_list():
         cities = list()
         cities.append(('','--'))
         for c in get_cities():
-            cities.append((int(c['id']), c['city_name']))
+            cities.append((c['id'], c['city_name']))
         return cities
 
     username = StringField('Username', validators=[DataRequired()])

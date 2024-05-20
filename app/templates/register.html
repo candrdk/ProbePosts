@@ -27,7 +27,7 @@
         </p>
         <p>
             {{ form.country.label }} <br>
-            {{ form.country  }}
+            {{ form.country  }} <br>
             {% for error in form.country.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
@@ -41,7 +41,7 @@
         </p>
         <p>
             {{ form.city.label }} <br>
-            {{ form.city  }}
+            {{ form.city  }} <br>
             {% for error in form.city.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
