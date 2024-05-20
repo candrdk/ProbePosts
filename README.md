@@ -30,7 +30,7 @@ The server can then be started with:
 ```
 $ flask run
 ```
-ProbePosts should then be available at https://localost:5000/
+ProbePosts should then be available at https://localhost:5000/
 
 ## Generating datasets
 The raw UFO sightings dataset we are using for this project can be found in the /data/ folder. The dataset is a scrape of UFO sighting reports from  https://nuforc.org and is publically available on [Kaggle](https://www.kaggle.com/datasets/joebeachcapital/ufo-sightings/data).
