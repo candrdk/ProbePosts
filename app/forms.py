@@ -5,27 +5,25 @@ from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional
 from app import db
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    handle = StringField('Handle', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    handle = StringField('Handle', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password_repeat = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-    country = SelectField('Country', validators=[DataRequired()], 
-                          choices=db.query_countries())
-    state   = SelectField('State', validators=[Optional()], 
+    state   = SelectField('State', validators=[Optional()],
                           choices=([('', '---')] + db.query_states()))
-    city    = SelectField('City', validators=[Optional()], 
+    city    = SelectField('City', validators=[Optional()],
                           choices=([('', '---')] + db.query_cities()))
     
-    def validate_username(self, username):
-        userdata = db.query_userdata_by_username(username.data)
+    def validate_handle(self, handle):
+        userdata = db.query_userdata_by_handle(handle.data)
         if userdata is not None:
-            raise ValidationError('Username already taken!')
+            raise ValidationError('Handle already taken!')
         
     # TASK: add a validator for the password. 
     # * Use regex to require at least 1 uppercase letter, at least 1 number, 

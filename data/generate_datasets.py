@@ -8,6 +8,59 @@ from werkzeug.security import generate_password_hash
 import requests
 from bs4 import BeautifulSoup
 
+state_name = {
+    "AL": "Alabama",
+    "AK": "Alaska",
+    "AZ": "Arizona",
+    "AR": "Arkansas",
+    "CA": "California",
+    "CO": "Colorado",
+    "CT": "Connecticut",
+    "DE": "Delaware",
+    "FL": "Florida",
+    "GA": "Georgia",
+    "HI": "Hawaii",
+    "ID": "Idaho",
+    "IL": "Illinois",
+    "IN": "Indiana",
+    "IA": "Iowa",
+    "KS": "Kansas",
+    "KY": "Kentucky",
+    "LA": "Louisiana",
+    "ME": "Maine",
+    "MD": "Maryland",
+    "MA": "Massachusetts",
+    "MI": "Michigan",
+    "MN": "Minnesota",
+    "MS": "Mississippi",
+    "MO": "Missouri",
+    "MT": "Montana",
+    "NE": "Nebraska",
+    "NV": "Nevada",
+    "NH": "New Hampshire",
+    "NJ": "New Jersey",
+    "NM": "New Mexico",
+    "NY": "New York",
+    "NC": "North Carolina",
+    "ND": "North Dakota",
+    "OH": "Ohio",
+    "OK": "Oklahoma",
+    "OR": "Oregon",
+    "PA": "Pennsylvania",
+    "RI": "Rhode Island",
+    "SC": "South Carolina",
+    "SD": "South Dakota",
+    "TN": "Tennessee",
+    "TX": "Texas",
+    "UT": "Utah",
+    "VT": "Vermont",
+    "VA": "Virginia",
+    "WA": "Washington",
+    "WV": "West Virginia",
+    "WI": "Wisconsin",
+    "WY": "Wyoming"
+}
+
 # Will retry on timeout forever
 def fetch_img_url(url):
     success = False
@@ -33,38 +86,36 @@ class Dataset():
     def __init__(self, path):
         self.dataset_path = path
 
-        self.post_attributes = ['poster_id', 'posted', 'date', 'time', 'country', 'state', 'city', 'duration', 'summary', 'img_url', 'lat', 'lng']
+        self.post_attributes = ['poster_id', 'posted', 'date', 'time', 'state_code', 'city_id', 'duration', 'summary', 'img_url', 'lat', 'lng']
         self.city_attributes = ['name']
-        self.state_attributes = ['name']
-        self.user_attributes = ['username', 'password_hash', 'country', 'state', 'city']
+        self.state_attributes = ['code', 'name']
+        self.user_attributes = ['display_name', 'handle', 'password_hash', 'state_code', 'city_id']
+        self.follows_attributes = ['user_id', 'follows_id']
 
         self.city_id = 1
         self.cities = {'Tampa': self.city_id}
 
-        self.state_id = 1
-        self.states = {'FL': self.state_id}
-
         self.user_id = 1
         self.users = [
             {
-                'username': 'FloridaMan', 
+                'display_name': 'Florida Man 🦅',
+                'handle': 'FloridaMan',
                 'password_hash': generate_password_hash('ProbeMeDaddy'),
-                'country': 'United States', 
-                'city': self.city_id, 
-                'state': self.state_id
+                'city_id': self.city_id,
+                'state_code': 'FL'
             }
         ]
 
         self.user_locations = {}
 
-    def get_user_id(self, state, city):
-        if state == 'FL':
+    def get_user_id(self, state_code, city):
+        if state_code == 'FL':
             return 1
 
-        if state in self.user_locations:
-            (max_posts_left, id) = self.user_locations[state]
+        if state_code in self.user_locations:
+            (max_posts_left, id) = self.user_locations[state_code]
             if max_posts_left > 0:
-                self.user_locations[state] = (max_posts_left - 1, id)
+                self.user_locations[state_code] = (max_posts_left - 1, id)
                 return id
         
         # Create a new user
@@ -72,19 +123,19 @@ class Dataset():
 
         # Determine how many posts this user should maximally have
         user_post_count = choices([1,2,4,6,8,10], weights=[0.25, 0.1, 0.35, 0.15, 0.1, 0.05])[0]
-        self.user_locations[state] = (user_post_count, self.user_id)
+        self.user_locations[state_code] = (user_post_count, self.user_id)
 
-        username = generate_username()[0]
-        while list(filter(lambda u: u['username'] == username, self.users)) != []:
-            print('Repeated username, generating a new one')
-            username = generate_username()[0]
+        handle = generate_username()[0]
+        while list(filter(lambda u: u['handle'] == handle, self.users)) != []:
+            print('Repeated handle, generating a new one')
+            handle = generate_username()[0]
 
         self.users.append({
-            'username': username,
+            'display_name': handle,
+            'handle': handle,
             'password_hash': generate_password_hash('dis'),
-            'country': 'United States',
-            'state': self.states[state],
-            'city': self.cities[city]
+            'state_code': state_code,
+            'city_id': self.cities[city]
         })
 
         return self.user_id
@@ -108,14 +159,10 @@ class Dataset():
                 # If duration is empty, set to unknown
                 duration = 'Unknown' if row['duration'] == '' else row['duration']
 
-                # Add assign city/state uid if they dont have one yet
+                # Add assign city id if they dont have one yet
                 if row['city'] not in self.cities:
                     self.city_id += 1
                     self.cities[row['city']] = self.city_id
-                
-                if row['state'] not in self.states:
-                    self.state_id += 1
-                    self.states[row['state']] = self.state_id
 
                 # Get the user id of the poster
                 poster_id = self.get_user_id(row['state'], row['city'])
@@ -126,9 +173,8 @@ class Dataset():
                     'posted': date_posted.strftime('%d/%m/%y'),
                     'date': date_spotted.strftime('%d/%m/%y'),
                     'time': row['time'],
-                    'country': 'United States',
-                    'state': self.states[row['state']],
-                    'city': self.cities[row['city']],
+                    'state_code': row['state'],
+                    'city_id': self.cities[row['city']],
                     'duration': duration,
                     'summary': row['summary'],
                     'img_url': img_url,
@@ -144,8 +190,10 @@ class Dataset():
         with open('states.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.state_attributes)
             writer.writeheader()
-            states_by_id = sorted(self.states, key=self.states.get)
-            writer.writerows([{'name': state} for state in states_by_id])
+            writer.writerows([{
+                'code': code,
+                'name': state_name[code]
+            } for code in state_name])
 
         with open('cities.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.city_attributes)
@@ -158,6 +206,26 @@ class Dataset():
             writer.writeheader()
             writer.writerows(self.users)
 
+        with open('follows.csv', 'w', newline='', encoding='utf-8') as file:
+            writer = DictWriter(file, fieldnames=self.follows_attributes)
+            writer.writeheader()
 
-dataset = Dataset('dataset_raw.csv')
-dataset.clean_dataset()
+            follows = []
+            for user_id in range(1, len(self.users)):
+                count = randint(1, 4) # TODO: 4 -> 20
+                following = set([randint(1, self.user_id) for i in range(count)])
+                following.discard(user_id)
+                follows += [
+                    {
+                        'user_id': user_id,
+                        'follows_id': follows_id
+                    }
+                    for follows_id in following
+                ]
+
+            writer.writerows(follows)
+
+
+if __name__ == '__main__':
+    dataset = Dataset('dataset_raw.csv')
+    dataset.clean_dataset()

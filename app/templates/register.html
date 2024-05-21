@@ -5,9 +5,9 @@
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
-            {{ form.username.label }} <br>
-            {{ form.username(size=32) }} <br>
-            {% for error in form.username.errors %}
+            {{ form.handle.label }} <br>
+            {{ form.handle(size=32) }} <br>
+            {% for error in form.handle.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
@@ -27,10 +27,6 @@
         </p>
         <div class="selects">
             <p>
-                {{ form.country.label }} <br>
-                {{ form.country  }} <br>
-            </p>
-            <p>
                 {{ form.state.label }} <br>
                 {{ form.state  }}
             </p>
@@ -39,9 +35,6 @@
                 {{ form.city  }} <br>
             </p>
         </div>
-        {% for error in form.country.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
         {% for error in form.state.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}

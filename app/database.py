@@ -18,39 +18,38 @@ class Database:
         self.cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
-    def query_userdata_by_username(self, username):
-        self.dict_cursor.execute("SELECT * FROM Users WHERE username = %s;", (username, ))
+        print(f'Connection encoding: {self.conn.info.encoding}')
+
+    def query_userdata_by_handle(self, handle):
+        self.dict_cursor.execute("SELECT * FROM Users WHERE handle = %s;", (handle, ))
         return self.dict_cursor.fetchone() if self.dict_cursor.rowcount == 1 else None
 
-    def query_username(self, user_id):
-        self.cursor.execute("SELECT username FROM Users WHERE id = %s", (user_id, ))
-        if self.cursor.rowcount == 1:
-            return self.cursor.fetchone()[0]
-        else:
-            return None
+    def query_user_display_name(self, user_id):
+        self.cursor.execute("SELECT display_name FROM Users WHERE id = %s;", (user_id, ))
+        return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
+
+    def query_user_handle(self, user_id):
+        self.cursor.execute("SELECT handle FROM Users WHERE id = %s;", (user_id, ))
+        return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
 
     def insert_user(self, user):
         query = """INSERT INTO 
-        Users(username, password_hash, country, state_id, city_id)
+        Users(display_name, handle, password_hash, state_code, city_id)
         VALUES (%s, %s, %s, %s, %s);"""
-        self.cursor.execute(query, (user.username, user.password_hash, user.country, user.state_id, user.city_id))
+        self.cursor.execute(query, (user.display_name, user.handle, user.password_hash, user.state_code, user.city_id))
         self.conn.commit()
-
-    def query_countries(self):
-        self.cursor.execute("SELECT country_name FROM Countries;")
-        return [country[0] for country in self.cursor.fetchall()]
     
     def query_states(self):
-        self.cursor.execute("SELECT id, state_name FROM States;")
+        self.cursor.execute("SELECT state_code, state_name FROM States;")
         return self.cursor.fetchall()
 
     def query_cities(self):
         self.cursor.execute("SELECT id, city_name FROM Cities;")
         return self.cursor.fetchall()
     
-    def query_state_name(self, state_id):
-        query = "SELECT state_name FROM States WHERE id = %s;"
-        self.cursor.execute(query, (state_id, ))
+    def query_state_name(self, state_code):
+        query = "SELECT state_name FROM States WHERE state_code = %s;"
+        self.cursor.execute(query, (state_code, ))
         if self.cursor.rowcount == 1:
             return self.cursor.fetchone()[0]
         else:

@@ -16,10 +16,10 @@ class User(UserMixin):
     
     def __init__(self, user_data):
         self.user_id = user_data.get('id')
-        self.username = user_data.get('username')
+        self.display_name = user_data.get('display_name')
+        self.handle = user_data.get('handle')
         self.password_hash = user_data.get('password_hash')
-        self.country = user_data.get('country')
-        self.state_id = user_data.get('state_id')
+        self.state_code = user_data.get('state_code')
         self.city_id = user_data.get('city_id')
     
 class Post:
@@ -27,17 +27,17 @@ class Post:
         self.post_id         = post_data['id']
 
         self.poster_id       = post_data['poster_id']
-        self.poster_username = db.query_username(self.poster_id)
+        self.poster_display_name = db.query_user_display_name(self.poster_id)
+        self.poster_handle       = db.query_user_handle(self.poster_id)
 
         self.post_date       = post_data['post_date']
         self.sighting_date   = post_data['sighting_date']
         self.sighting_time   = post_data['sighting_time']
-        self.country         = post_data['country']
 
-        self.state_id        = post_data['state_id']
+        self.state_code      = post_data['state_code']
         self.city_id         = post_data['city_id']
-        self.state           = db.query_state_name(self.state_id) if self.state_id is not None else None
-        self.city            = db.query_city_name(self.city_id) if self.state_id is not None else None
+        self.state_name      = db.query_state_name(self.state_code) if self.state_code is not None else None
+        self.city            = db.query_city_name(self.city_id)   if self.city_id  is not None else None
 
         self.duration        = post_data['duration']
         self.content         = post_data['summary']

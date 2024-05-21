@@ -3,10 +3,13 @@
 {% block content %}
     {% for post in posts %}
     <div class="post">
-        <!-- <h2 class="name">{{ post.poster_username }}<span class="posted">{{ post.post_date }}</span></h2> -->
-        <p class="header"><span class="handle">@{{ post.poster_username }}</span><span class="posted">{{ post.post_date }}</span></p>
+        <p class="header">
+            <h2 class="name">{{ post.poster_display_name }}</h2>
+            <span class="handle">@{{ post.poster_handle }}</span>
+            <span class="posted">{{ post.post_date }}</span>
+        </p>
         <img class="image" loading="lazy" src="{{ post.image_url }}">
-        <p class="location">seen in: {{ post.country }}, {{ post.state }}, {{ post.city}} (<a target="_blank" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}">{{ post.latitude }},{{ post.longitude }}</a>)</p>
+        <p class="location">seen in: {{ post.city }}, {{ post.state_name }} (<a target="_blank" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}">{{ post.latitude }},{{ post.longitude }}</a>)</p>
         <p class="spotted">spotted: {{ post.sighting_date }} at {{ post.sighting_time }} ({{ post.duration }})</p>
         <p class="description">{{ post.content }}</p>
     </div>

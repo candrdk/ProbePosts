@@ -25,10 +25,10 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user_data = db.query_userdata_by_username(form.username.data)
+        user_data = db.query_userdata_by_handle(form.handle.data)
 
         if user_data is None or not check_password_hash(user_data['password_hash'], form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid handle or password')
             return redirect(url_for('login'))
         
         user = User(user_data)
@@ -57,10 +57,10 @@ def register():
 
     if form.validate_on_submit():
         db.insert_user(User({
-            'username': form.username.data,
+            'handle': form.handle.data,
+            'display_name': form.handle.data,
             'password_hash': generate_password_hash(form.password.data),
-            'country': form.country.data,
-            'state_id': None if form.state.data == '' else form.state.data,
+            'state_code': None if form.state.data == '' else form.state.data,
             'city_id':  None if form.city.data  == '' else form.city.data
         }))
 
