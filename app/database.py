@@ -18,8 +18,6 @@ class Database:
         self.cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
-        print(f'Connection encoding: {self.conn.info.encoding}')
-
     def query_userdata_by_handle(self, handle):
         self.dict_cursor.execute("SELECT * FROM Users WHERE handle = %s;", (handle, ))
         return self.dict_cursor.fetchone() if self.dict_cursor.rowcount == 1 else None
