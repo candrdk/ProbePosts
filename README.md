@@ -3,7 +3,7 @@ Microblogging for UFO hunters.
 
 TODO: longer description
 
-TODO: screenshot
+![screenshot of main feed](screenshot.png)
 
 # How to run
 Clone the repository and run the following command to install the required packages (preferably in a venv):
