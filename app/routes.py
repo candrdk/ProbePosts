@@ -25,12 +25,14 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User(db.query_userdata_by_username(form.username.data))
+        user_data = db.query_userdata_by_username(form.username.data)
 
-        if user is None or not check_password_hash(user.password_hash, form.password.data):
+        if user_data is None or not check_password_hash(user_data['password_hash'], form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
-
+        
+        user = User(user_data)
+        
         login_user(user, remember=form.remember_me.data)
 
         next_page = request.args.get('next')

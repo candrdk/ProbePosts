@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hello, {{ current_user.username }}!</h1>
     {% for post in posts %}
-    <div>
-        <p>
-            {{ post.poster_username }} posted on {{ post.post_date }} 
-            from {{ post.city }}, {{ post.state }}, {{ post.country }}: <br>
-            {{ post.content }}
-        </p>
+    <div class="post">
+        <!-- <h2 class="name">{{ post.poster_username }}<span class="posted">{{ post.post_date }}</span></h2> -->
+        <p class="header"><span class="handle">@{{ post.poster_username }}</span><span class="posted">{{ post.post_date }}</span></p>
+        <img class="image" loading="lazy" src="{{ post.image_url }}">
+        <p class="location">seen in: {{ post.country }}, {{ post.state }}, {{ post.city}} (<a target="_blank" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}">{{ post.latitude }},{{ post.longitude }}</a>)</p>
+        <p class="spotted">spotted: {{ post.sighting_date }} at {{ post.sighting_time }} ({{ post.duration }})</p>
+        <p class="description">{{ post.content }}</p>
     </div>
+    <hr>
     {% endfor %}
 {% endblock %}
+
+
+

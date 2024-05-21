@@ -2,13 +2,13 @@
 
 {% block content %}
     <h1>Register</h1>
-    <form action="" method="post">
+    <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }} <br>
             {{ form.username(size=32) }} <br>
             {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error}}]</span>
+            <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
@@ -25,29 +25,33 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
-            {{ form.country.label }} <br>
-            {{ form.country  }} <br>
-            {% for error in form.country.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.state.label }} <br>
-            {{ form.state  }}
-            {% for error in form.state.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.city.label }} <br>
-            {{ form.city  }} <br>
-            {% for error in form.city.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+        <div class="selects">
+            <p>
+                {{ form.country.label }} <br>
+                {{ form.country  }} <br>
+            </p>
+            <p>
+                {{ form.state.label }} <br>
+                {{ form.state  }}
+            </p>
+            <p>
+                {{ form.city.label }} <br>
+                {{ form.city  }} <br>
+            </p>
+        </div>
+        {% for error in form.country.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        {% for error in form.state.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        {% for error in form.city.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
         <p>
             {{ form.submit() }}
         </p>
     </form>
+
+    <p>Already Registered? <a href="{{ url_for('login') }}">Click to Sign In!</a></p>
 {% endblock %}
