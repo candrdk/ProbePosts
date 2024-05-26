@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField,SubmitField, SelectField, FloatField, URLField
+from wtforms import StringField, PasswordField, BooleanField,SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
 from wtforms.fields import DateTimeField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional
 
@@ -40,7 +40,7 @@ class RegistrationForm(FlaskForm):
 class CreatePostForm(FlaskForm):
     summary = StringField('Summary of sighting', validators=[DataRequired()])
     imageUrl = URLField('The image Url', validators=[Optional()])
-    sightingDateTime = DateTimeField("Sighting Date and time", validators=[DataRequired()], format='%d/%m/%y %H:%M')
+    sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%d/%m/%y %H:%M')
     sightingDuration = StringField("The duration of the sighting", validators=[DataRequired()])
 
     state = SelectField('The state the sighting was made in', validators=[Optional()],
@@ -55,6 +55,5 @@ class CreatePostForm(FlaskForm):
     post = SubmitField('Post sighting')
 
     def validate_on_submit(self, extra_validators=None):
-        if self.sightingDateTime.data is None:
-            raise ValidationError("Sighting Datetime is in the wrong format")
+       
         return super().validate_on_submit(extra_validators)

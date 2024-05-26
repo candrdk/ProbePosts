@@ -73,8 +73,7 @@ def register():
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
 def create_post():
-    form:CreatePostForm = CreatePostForm()
-    print(form.city.data, flush=True)
+    form = CreatePostForm()
     if form.validate_on_submit():
         p = Post({
             'poster_id': current_user.id,
