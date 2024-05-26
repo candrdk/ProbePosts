@@ -22,6 +22,8 @@
             {% else %}
             <a href="/"><h2>Feed</h2></a>
             <hr>
+            <a href="{{ url_for('create_post') }}"><h2>Create Post</h2></a>
+            <hr>
             <a href="/"><h2>Profile</h2></a>
             <hr>
             <a href="{{ url_for('logout') }}"><h2>Logout</h2></a>

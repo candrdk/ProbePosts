@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Register</h1>
+    <form action="" method="post" novalidate>    
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.summary.label }} <br>
+            {{ form.summary(size=512) }} <br>
+            {% for error in form.summary.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        
+        <p>
+            {{ form.sightingDateTime.label }} <br>
+            {{ form.sightingDateTime(class='datePicker') }} <br>
+            {% for error in form.sightingDateTime.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.sightingDuration.label }} <br>
+            {{ form.sightingDuration(size=128) }} <br>
+            {% for error in form.sightingDuration.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <div class="selects">
+            <p>
+                {{ form.state.label }} <br>
+                {{ form.summary }} <br>
+            </p>
+            <p>
+                {{ form.summary.label }} <br>
+                {{ form.summary }} <br>
+            </p>
+        </div>
+        <p>
+            {{ form.latField.label }} <br>
+            {{ form.latField }} <br>
+            {% for error in form.latField.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.lonField.label }} <br>
+            {{ form.lonField }} <br>
+            {% for error in form.lonField.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.submit() }}
+        </p>
+        <p>Cancel <a href="{{ url_for(index) }}"></a></p>
+        
+    </form>
+{% endblock %}
+
