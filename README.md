@@ -39,4 +39,10 @@ To generate all the tables used by ProbePosts from this dataset, you can navigat
 ```
 $ py generate_dataset.py
 ```
-This is **not** recommended, however, since the script needs to scrape image url's from the UFO sighting reports website, which takes about a second per report. Generating all 1200 posts took about an hour.
+This generate csv files for posts, users, and follow relationships.
+
+Note that the image urls for posts are not included in the generated posts.csv table. These instead have to be scraped by running
+```
+$ py scrape_image_urls.py
+```
+This is **not** recommended, however, since the UFO sighting reports website the images are being scraped from is *very* slow. The `init_db.py` script will then combine these datasets to give the posts their proper image urls. If an image url for a post is missing in the `image_urls.csv` file (or if the file is empty), posts are just assigned a dummy image from https://picsum.photos/512.

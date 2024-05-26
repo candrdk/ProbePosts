@@ -43,7 +43,25 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
                                         latitude, longitude)
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
+        
+        # Create a temporary staging table, copy the actual image urls into it,
+        # update the actual Posts table and finally drop it. We have split image 
+        # urls up from the posts.csv file like this to avoid having to scrape 
+        # all urls every time we want to change the rest of the dataset.
+        with open('image_urls.csv', 'r') as f:
+            cur.execute('CREATE TEMP TABLE tmp_img (id SERIAL, image_url VARCHAR(512));')
 
+            with cur.copy('''COPY tmp_img(image_url) FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
+                copy.write(f.read())
+
+            cur.execute('''UPDATE Posts 
+                           SET image_url = tmp_img.image_url 
+                           FROM tmp_img 
+                           WHERE Posts.id = tmp_img.id;
+                        
+                           DROP TABLE tmp_img;''')
+
+        # Load the follows relation table
         with open('follows.csv', 'r') as f:
             with cur.copy('''COPY Follows(user_id, follows_id)
                           FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:

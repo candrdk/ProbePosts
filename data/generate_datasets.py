@@ -5,9 +5,6 @@ from random import randint, choices
 from random_username.generate import generate_username 
 from werkzeug.security import generate_password_hash
 
-import requests
-from bs4 import BeautifulSoup
-
 state_name = {
     "AL": "Alabama",
     "AK": "Alaska",
@@ -16,6 +13,7 @@ state_name = {
     "CA": "California",
     "CO": "Colorado",
     "CT": "Connecticut",
+    "DC": "District Of Columbia",
     "DE": "Delaware",
     "FL": "Florida",
     "GA": "Georgia",
@@ -61,27 +59,6 @@ state_name = {
     "WY": "Wyoming"
 }
 
-# Will retry on timeout forever
-def fetch_img_url(url):
-    success = False
-    while not success:
-        try:
-            response = requests.get(url, timeout=5)
-            success = True
-        except requests.exceptions.RequestException as e:
-            print('timed out! retrying')
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-    img_tags = soup.find_all('img')
-    img_url = 'https://friddo.dk/assets/favicon.svg'
-
-    for img in img_tags:
-        img_url = img.get('src')
-        if '/wp-content/uploads/wpforms' in img_url:
-            break
-
-    return img_url
-
 class Dataset():
     def __init__(self, path):
         self.dataset_path = path
@@ -107,6 +84,7 @@ class Dataset():
         ]
 
         self.user_locations = {}
+        self.password_hash = generate_password_hash('dis')
 
     def get_user_id(self, state_code, city):
         if state_code == 'FL':
@@ -133,7 +111,7 @@ class Dataset():
         self.users.append({
             'display_name': handle,
             'handle': handle,
-            'password_hash': generate_password_hash('dis'),
+            'password_hash': self.password_hash,
             'state_code': state_code,
             'city_id': self.cities[city]
         })
@@ -153,8 +131,12 @@ class Dataset():
                 date_spotted = datetime.strptime(row['date'], '%m/%d/%y')
                 date_posted = date_spotted + timedelta(days=randint(0,7))
 
-                # Fetch the img url
-                img_url = fetch_img_url(row['img_link'])
+                # Posts cant be made before the internet was even a thing /:
+                if date_posted < datetime(2003, 6, 6):
+                    date_posted = datetime(randint(2003, 2023), randint(1,12), randint(1,29))
+
+                # Just use a dummy image url here
+                img_url = "https://picsum.photos/512"
                 
                 # If duration is empty, set to unknown
                 duration = 'Unknown' if row['duration'] == '' else row['duration']
@@ -182,10 +164,8 @@ class Dataset():
                     'lng': row['lng']
                 })
 
-                print(f'Read post {i}')
-
-                if i > 4:
-                    break
+                if (i % 100) == 0:
+                    print(f'Read {i} posts.')
 
         with open('states.csv', 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.state_attributes)
@@ -212,7 +192,7 @@ class Dataset():
 
             follows = []
             for user_id in range(1, len(self.users)):
-                count = randint(1, 4) # TODO: 4 -> 20
+                count = randint(1, 20) # TODO: 4 -> 20
                 following = set([randint(1, self.user_id) for i in range(count)])
                 following.discard(user_id)
                 follows += [

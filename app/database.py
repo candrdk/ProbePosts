@@ -62,6 +62,6 @@ class Database:
             return 'Unknown'
         
     def query_recent_posts(self, count):
-        query = "SELECT * FROM Posts ORDER BY post_date LIMIT %s;"
+        query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s;"
         self.dict_cursor.execute(query, (count, ))
         return self.dict_cursor.fetchall()
