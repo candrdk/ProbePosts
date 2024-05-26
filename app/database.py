@@ -1,6 +1,7 @@
 import os
 import psycopg
 from dotenv import load_dotenv
+#from app.models import Post
 
 class Database:
     def __init__(self):
@@ -37,6 +38,16 @@ class Database:
         self.cursor.execute(query, (user.display_name, user.handle, user.password_hash, user.state_code, user.city_id))
         self.conn.commit()
     
+    def insert_post(self, post):
+        query = """INSERT INTO
+        Posts(poster_id, post_date, sighting_date, sighting_time, state_code, city_id, duration, summary, image_url, latitude, longitude)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+        """
+        self.cursor.execute(query, (post.poster_id, post.post_date, post.sighting_date,
+                                     post.sighting_time, post.state_code, post.city_id,
+                                       post.duration, post.content, post.image_url, post.latitude, post.longitude))
+        self.conn.commit()
+
     def query_states(self):
         self.cursor.execute("SELECT state_code, state_name FROM States;")
         return self.cursor.fetchall()
