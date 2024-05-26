@@ -1,7 +1,6 @@
 import os
 import psycopg
 from dotenv import load_dotenv
-#from app.models import Post
 
 class Database:
     def __init__(self):
