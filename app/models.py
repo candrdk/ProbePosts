@@ -24,7 +24,7 @@ class User(UserMixin):
     
 class Post:
     def __init__(self, post_data):
-        self.post_id         = post_data['id']
+        self.post_id         = post_data.get('id')
 
         self.poster_id       = post_data['poster_id']
         self.poster_display_name = db.query_user_display_name(self.poster_id)

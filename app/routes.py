@@ -5,8 +5,9 @@ from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, CreatePostForm
 from app.models import User, Post
+from datetime import date
 
 @app.route('/')
 @app.route('/index')
@@ -68,3 +69,25 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/create_post', methods=['GET', 'POST'])
+@login_required
+def create_post():
+    form = CreatePostForm()
+    if form.validate_on_submit():
+        p = Post({
+            'poster_id': current_user.id,
+            'post_date': date.today(),
+            'sighting_date': form.sightingDateTime.data.date(),
+            'sighting_time': form.sightingDateTime.data.time(),
+            'state_code': None if form.state.data == '' else form.state.data,
+            'city_id':  None if form.city.data == '' else form.city.data,
+            'summary': form.summary.data, 
+            'duration': form.sightingDuration.data,
+            'image_url': form.imageUrl.data,
+            'latitude': form.latField.data,
+            'longitude': form.lonField.data
+        })
+        db.insert_post(p)
+        return redirect(url_for('index'))
+    return render_template('create_post.html', title='Create Post', form=form)

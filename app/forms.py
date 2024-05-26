@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField
+from wtforms import StringField, PasswordField, BooleanField,SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional
 
 from app import db
@@ -35,3 +35,20 @@ class RegistrationForm(FlaskForm):
     # the function should have the following signature:
     # def validate_password(self, password):
     # if validation is successful, return nothing. Otherwise, raise an validationerror
+
+class CreatePostForm(FlaskForm):
+    summary = StringField('Summary of sighting', validators=[DataRequired()])
+    imageUrl = URLField('The image Url', validators=[Optional()])
+    sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%d/%m/%y %H:%M')
+    sightingDuration = StringField("The duration of the sighting", validators=[DataRequired()])
+
+    state = SelectField('The state the sighting was made in', validators=[Optional()],
+                        choices=([('', '---')]+db.query_states()))
+    city = SelectField('The city the sighting was made in', validators=[Optional()],
+                        choices=([('', '---')]+db.query_cities()))
+
+
+    latField = FloatField('Sighting latitude', validators=[Optional()])
+    lonField = FloatField('Sighting latitude', validators=[Optional()])
+
+    post = SubmitField('Post sighting')
