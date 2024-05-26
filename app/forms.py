@@ -52,7 +52,3 @@ class CreatePostForm(FlaskForm):
     lonField = FloatField('Sighting latitude', validators=[Optional()])
 
     post = SubmitField('Post sighting')
-
-    def validate_on_submit(self, extra_validators=None):
-       
-        return super().validate_on_submit(extra_validators)
