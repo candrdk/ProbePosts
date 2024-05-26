@@ -73,14 +73,22 @@ def register():
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
 def create_post():
-    form = CreatePostForm()
-    print(form, flush=True)
-#    if form.validate_on_submit():User
-#        db.insert_post(Post({
-#            'poster_id': current_user.id,
-#            'post_date': date.today(),
-#            'sighting_date': form.sightingDateTime.data.date,
-#            'sighting_time': form.sightingDateTime.data.time,
-#
-#        }))
+    form:CreatePostForm = CreatePostForm()
+    print(form.city.data, flush=True)
+    if form.validate_on_submit():
+        p = Post({
+            'poster_id': current_user.id,
+            'post_date': date.today(),
+            'sighting_date': form.sightingDateTime.data.date(),
+            'sighting_time': form.sightingDateTime.data.time(),
+            'state_code': None if form.state.data == '' else form.state.data,
+            'city_id':  None if form.city.data == '' else form.city.data,
+            'summary': form.summary.data, 
+            'duration': form.sightingDuration.data,
+            'image_url': form.imageUrl.data,
+            'latitude': form.latField.data,
+            'longitude': form.lonField.data
+        })
+        db.insert_post(p)
+        return redirect(url_for('index'))
     return render_template('create_post.html', title='Create Post', form=form)
