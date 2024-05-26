@@ -28,11 +28,11 @@
         <div class="selects">
             <p>
                 {{ form.state.label }} <br>
-                {{ form.summary }} <br>
+                {{ form.state }} <br>
             </p>
             <p>
-                {{ form.summary.label }} <br>
-                {{ form.summary }} <br>
+                {{ form.city.label }} <br>
+                {{ form.city }} <br>
             </p>
         </div>
         <p>
@@ -50,9 +50,9 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.submit() }}
+            {{ form.post() }}
         </p>
-        <p>Cancel <a href="{{ url_for(index) }}"></a></p>
+        <p>Cancel <a href="{{ url_for('index') }}"></a></p>
         
     </form>
 {% endblock %}
