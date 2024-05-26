@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Register</h1>
+    <h1>Create Post</h1>
     <form action="" method="post" novalidate>    
         {{ form.hidden_tag() }}
         <p>
             {{ form.summary.label }} <br>
-            {{ form.summary(size=512) }} <br>
+            {{ form.summary(rows=5, cols=60) }} <br>
             {% for error in form.summary.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
@@ -52,7 +52,9 @@
         <p>
             {{ form.post() }}
         </p>
-        <p>Cancel <a href="{{ url_for('index') }}"></a></p>
+        <p>
+            <a href="{{ url_for('index') }}">Cancel</a>
+        </p>
         
     </form>
 {% endblock %}

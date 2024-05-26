@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField,SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
-from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
+from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional, Length
 
 from app import db
 
@@ -9,6 +9,11 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
+
+# TODO:
+# Should probably make city a stringfield
+# If not present in database, insert the new city
+# before inserting the user or post.
 
 class RegistrationForm(FlaskForm):
     handle = StringField('Handle', validators=[DataRequired()])
@@ -37,16 +42,15 @@ class RegistrationForm(FlaskForm):
     # if validation is successful, return nothing. Otherwise, raise an validationerror
 
 class CreatePostForm(FlaskForm):
-    summary = StringField('Summary of sighting', validators=[DataRequired()])
+    summary = TextAreaField('Summary of sighting', validators=[DataRequired(), Length(max=512, message="Maximum 512 characters allowed")])
     imageUrl = URLField('The image Url', validators=[Optional()])
-    sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%d/%m/%y %H:%M')
+    sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     sightingDuration = StringField("The duration of the sighting", validators=[DataRequired()])
 
-    state = SelectField('The state the sighting was made in', validators=[Optional()],
+    state = SelectField('State', validators=[Optional()],
                         choices=([('', '---')]+db.query_states()))
-    city = SelectField('The city the sighting was made in', validators=[Optional()],
+    city = SelectField('City', validators=[Optional()],
                         choices=([('', '---')]+db.query_cities()))
-
 
     latField = FloatField('Sighting latitude', validators=[Optional()])
     lonField = FloatField('Sighting latitude', validators=[Optional()])

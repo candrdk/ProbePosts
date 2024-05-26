@@ -10,23 +10,24 @@
     <div class="container">
         <div class="sidebar">
             <div class="logocon">
-                <img type="image/svg+xml" src="{{ url_for('static', filename='logo.svg') }}">
-                <img class="eyes" type="image/svg+xml" src="{{ url_for('static', filename='eyes.svg') }}">
+                <a href="{{ url_for('index') }}">
+                    <img type="image/svg+xml" src="{{ url_for('static', filename='logo.svg') }}">
+                    <img class="eyes" type="image/svg+xml" src="{{ url_for('static', filename='eyes.svg') }}">
+                </a>
             </div>
             
             <hr>
-
             {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}"><h2>Sign in</h2></a>
-            <a href="{{ url_for('register') }}"><h2>Register</h2></a>
+                <h2><a href="{{ url_for('login') }}">Sign in</a></h2>
+                <h2><a href="{{ url_for('register') }}">Register</a></h2>
             {% else %}
-            <a href="/"><h2>Feed</h2></a>
-            <hr>
-            <a href="{{ url_for('create_post') }}"><h2>Create Post</h2></a>
-            <hr>
-            <a href="/"><h2>Profile</h2></a>
-            <hr>
-            <a href="{{ url_for('logout') }}"><h2>Logout</h2></a>
+                <h2><a href="/">Feed</a></h2>
+                <hr>
+                <h2><a href="{{ url_for('create_post') }}">Create Post</a></h2>
+                <hr>
+                <h2><a href="/">Profile</a></h2>
+                <hr>
+                <h2><a href="{{ url_for('logout') }}">Logout</a></h2>
             {% endif %}
 
         </div>

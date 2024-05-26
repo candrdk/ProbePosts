@@ -74,6 +74,7 @@ def register():
 @login_required
 def create_post():
     form = CreatePostForm()
+    
     if form.validate_on_submit():
         p = Post({
             'poster_id': current_user.id,
