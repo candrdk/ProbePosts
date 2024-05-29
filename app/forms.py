@@ -53,6 +53,11 @@ class CreatePostForm(FlaskForm):
                         choices=([('', '---')]+db.query_cities()))
 
     latField = FloatField('Sighting latitude', validators=[Optional()])
-    lonField = FloatField('Sighting latitude', validators=[Optional()])
+    lonField = FloatField('Sighting longitude', validators=[Optional()])
 
     post = SubmitField('Post sighting')
+
+
+class CreateSearchForm(FlaskForm):
+    search = StringField('Searchfield', validators=[DataRequired()], render_kw={"placeholder": "Search..."})
+    submit = SubmitField('Search')

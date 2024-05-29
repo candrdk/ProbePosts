@@ -1,4 +1,22 @@
+
+
+
 {% extends "base.html" %}
+
+
+
+
+{% block header %}
+
+<form class="search" action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {{ form.search(size=32) }}
+
+
+    {{ form.submit() }}
+</form>
+
+{% endblock %}
 
 {% block content %}
     {% for post in posts %}
@@ -16,6 +34,3 @@
     <hr>
     {% endfor %}
 {% endblock %}
-
-
-

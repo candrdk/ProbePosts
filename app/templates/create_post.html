@@ -35,25 +35,24 @@
                 {{ form.city }} <br>
             </p>
         </div>
-        <p>
-            {{ form.latField.label }} <br>
-            {{ form.latField }} <br>
-            {% for error in form.latField.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.lonField.label }} <br>
-            {{ form.lonField }} <br>
-            {% for error in form.lonField.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
+        <div class="selects">
+            <p>
+                {{ form.latField.label }} <br>
+                {{ form.latField }} <br>
+                {% for error in form.latField.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.lonField.label }} <br>
+                {{ form.lonField }} <br>
+                {% for error in form.lonField.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+        </div>
         <p>
             {{ form.post() }}
-        </p>
-        <p>
-            <a href="{{ url_for('index') }}">Cancel</a>
         </p>
         
     </form>

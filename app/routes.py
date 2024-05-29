@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, CreatePostForm
+from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchForm
 from app.models import User, Post
 from datetime import date
 
@@ -92,3 +92,16 @@ def create_post():
         db.insert_post(p)
         return redirect(url_for('index'))
     return render_template('create_post.html', title='Create Post', form=form)
+
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    form = CreateSearchForm()
+
+    # TODO: USE FORM
+    
+    posts_data = db.query_recent_posts(3)
+    posts = [Post(p) for p in posts_data]
+
+    return render_template('search.html', title="Search", form=form, posts=posts)
