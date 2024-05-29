@@ -187,3 +187,7 @@ select {
 .feed > hr {
     margin-bottom: 40px;
 }
+
+.profiletitle {
+    margin-bottom: 0;
+}

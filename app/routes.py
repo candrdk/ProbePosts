@@ -13,7 +13,7 @@ from datetime import date
 @app.route('/index')
 @login_required
 def index():
-    posts_data = db.query_recent_posts(3)
+    posts_data = db.query_recent_posts(100)
     posts = [Post(p) for p in posts_data]
 
     return render_template('index.html', title="Home", posts=posts)
@@ -105,3 +105,11 @@ def search():
     posts = [Post(p) for p in posts_data]
 
     return render_template('search.html', title="Search", form=form, posts=posts)
+
+@app.route('/profile')
+def profile():
+
+    # TODO: load profile data from url
+    # TODO: display all users posts underneath
+
+    return render_template('profile.html', title="Profile")
