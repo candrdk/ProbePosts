@@ -29,6 +29,10 @@ class Database:
     def query_user_handle(self, user_id):
         self.cursor.execute("SELECT handle FROM Users WHERE id = %s;", (user_id, ))
         return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
+    
+    def query_posts_by_user_id(self, user_id):
+        self.dict_cursor.execute("SELECT * FROM Posts WHERE poster_id = %s ORDER BY post_date DESC;", (user_id, ))
+        return self.dict_cursor.fetchall()
 
     def insert_user(self, user):
         query = """INSERT INTO 

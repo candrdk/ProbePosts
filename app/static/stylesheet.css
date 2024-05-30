@@ -191,3 +191,20 @@ select {
 .profiletitle {
     margin-bottom: 0;
 }
+
+.body {
+    display: grid;
+    grid-template-columns: 1fr 20px;
+    gap: 0 10px;
+}
+
+.vote > p {
+    user-select: none;
+}
+
+.upvoted {
+    color: green;
+}
+.downvoted {
+    color: red;
+}

@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 
 from urllib.parse import urlsplit
@@ -106,10 +106,43 @@ def search():
 
     return render_template('search.html', title="Search", form=form, posts=posts)
 
-@app.route('/profile')
-def profile():
+@app.route('/@<handle>')
+def profile(handle):
+
+    user_data = db.query_userdata_by_handle(handle)
+    if user_data is None:
+        flash(f'No user exists with handle @{handle}')
+        return redirect(url_for(f'/@{handle}'))
+    
+    user = User(user_data)
+
+    profile_data = {
+        "displayname":user.display_name,
+        "handle":user.handle,
+        "state":db.query_state_name(user.state_code),
+        "city":db.query_city_name(user.city_id)
+    }
+
+    print(user.user_id)
+
+    posts_data = db.query_posts_by_user_id(user.user_id)
+    posts = [Post(p) for p in posts_data]
+
+    print(len(posts))
 
     # TODO: load profile data from url
     # TODO: display all users posts underneath
 
-    return render_template('profile.html', title="Profile")
+    return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
+
+
+@app.route('/upvote/<post_id>', methods=['POST'])
+def upvote(post_id):
+    print('up', post_id)
+    return jsonify({'type': 'upvote', 'post_id':post_id})
+
+
+@app.route('/downvote/<post_id>', methods=['POST'])
+def downvote(post_id):
+    print('down', post_id)
+    return jsonify({'type': 'downvote', 'post_id':post_id})

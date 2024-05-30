@@ -1,19 +1,15 @@
-{% extends "base.html" %}
+{% extends "feed.html" %}
 
 
 
 
 {% block header %}
-<h1 class="profiletitle">Profile name</h1>
-<p class="handle">@handle here</p>
+<h1 class="profiletitle">{{ user.displayname }}</h1>
+<p class="handle">@{{ user.handle }}</p>
 
-<p class="location">state name, city name (<a target="_blank" href="/">latitude, longitude here</a>)</p>
+<p class="location">{{ user.state }}, {{ user.city }}</p>
 
 <hr>
-
-
-
 {% endblock %}
 
 
-<!-- insert content block here, same as in index.html -->

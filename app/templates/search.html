@@ -17,20 +17,3 @@
 </form>
 
 {% endblock %}
-
-{% block content %}
-    {% for post in posts %}
-    <div class="post">
-        <div class="header">
-            <h2 class="name"><a href="/@{{ post.poster_display_name }}">{{ post.poster_display_name }}</a></h2>
-            <span class="handle"><a href="/@{{ post.poster_display_name }}">@{{ post.poster_display_name }}</a></span>
-            <span class="posted">{{ post.post_date }}</span>
-        </div>
-        <img class="image" loading="lazy" src="{{ post.image_url }}">
-        <p class="location">seen in: {{ post.city }}, {{ post.state_name }} (<a target="_blank" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}">{{ post.latitude }},{{ post.longitude }}</a>)</p>
-        <p class="spotted">spotted: {{ post.sighting_date }} at {{ post.sighting_time }} ({{ post.duration }})</p>
-        <p class="description">{{ post.content }}</p>
-    </div>
-    <hr>
-    {% endfor %}
-{% endblock %}
