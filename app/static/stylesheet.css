@@ -198,13 +198,7 @@ select {
     gap: 0 10px;
 }
 
-.vote > p {
+.vote {
     user-select: none;
-}
-
-.upvoted {
-    color: green;
-}
-.downvoted {
-    color: red;
+    cursor: pointer; /* Show pointer cursor on hover */
 }

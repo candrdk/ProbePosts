@@ -136,13 +136,19 @@ def profile(handle):
     return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
 
-@app.route('/upvote/<post_id>', methods=['POST'])
+@app.route('/upvote/<post_id>', methods=['GET'])
+@login_required
 def upvote(post_id):
-    print('up', post_id)
-    return jsonify({'type': 'upvote', 'post_id':post_id})
+    db.query_rate_post(current_user.id, post_id, True)
+    karma = db.query_post_karma(post_id)
+    rating = db.query_post_rating(current_user.id, post_id)
+    return jsonify({'post_id': post_id, 'karma': karma, 'rating': rating})
 
 
-@app.route('/downvote/<post_id>', methods=['POST'])
+@app.route('/downvote/<post_id>', methods=['GET'])
+@login_required
 def downvote(post_id):
-    print('down', post_id)
-    return jsonify({'type': 'downvote', 'post_id':post_id})
+    db.query_rate_post(current_user.id, post_id, False)
+    karma = db.query_post_karma(post_id)
+    rating = db.query_post_rating(current_user.id, post_id)
+    return jsonify({'post_id': post_id, 'karma': karma, 'rating': rating})

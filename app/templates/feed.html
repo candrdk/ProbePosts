@@ -1,55 +1,38 @@
 {% extends "base.html" %}
 
-
-
-
 {% block content %}
 
-    <script>
-        function vote(id, type) {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.vote').click(function(ev) {
+                var vote_type = $(ev.currentTarget).attr('vote-type');
+                var post_id = $(ev.currentTarget).attr('post-id');
 
-
-            const upvote_button = document.getElementById(id).children[0];
-            const downvote_button = document.getElementById(id).children[2];
-            const counter_elem = document.getElementById(id).children[1];
-
-            console.log(counter_elem);
-
-
-            fetch('/'+(type ? 'upvote' : 'downvote')+'/'+id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: {},
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                $.get('/' + vote_type + '/' + post_id, function(data) {
+                    $('.karma').text(data['karma']);
+                    $('#' + post_id + ' .vote').each(function() {
+                        var $thisVote = $(this);
+                        if ($thisVote.attr('vote-type') === 'upvote') {
+                            if (data['rating'] == null) {
+                                $thisVote.text("⬆️");
+                            }
+                            else {
+                                $thisVote.text(data['rating'] ? "✅" : "⬆️");
+                            }
+                        } else if ($thisVote.attr('vote-type') === 'downvote') {
+                            if (data['rating'] == null) {
+                                $thisVote.text("⬇️");
+                            }
+                            else {
+                                $thisVote.text(data['rating'] ? "⬇️" : "❌");
+                            }
+                        }
+                    });
+                });
             });
-
-
-            let counter = parseInt(counter_elem.innerHTML);
-
-            if(type) { // if upvote pressed
-                counter += upvote_button.classList.contains("upvoted") ? -1 : 1
-                if(downvote_button.classList.contains("downvoted")) counter++;
-
-                upvote_button.classList.toggle("upvoted")
-                downvote_button.classList.remove("downvoted")
-            } else { // if downvote pressed
-                counter += downvote_button.classList.contains("downvoted") ? 1 : -1
-                if(upvote_button.classList.contains("upvoted")) counter--;
-
-                downvote_button.classList.toggle("downvoted")
-                upvote_button.classList.remove("upvoted")
-            }
-            counter_elem.innerHTML = counter;
-            return;
-        }
-
+        });
     </script>
-
-
 
     {% for post in posts %}
     <div class="post">
@@ -59,15 +42,7 @@
             <span class="posted">{{ post.post_date }}</span>
         </div>
 
-
-        {% if post.image_url.split(".")[-1] in ['jpeg', 'jpg', 'png'] %}
         <img class="image" loading="lazy" src="{{ post.image_url }}">
-        {% else %}
-        <video class="image" controls>
-            <source src="{{ post.image_url }}" type="video/{{ post.image_url.split('.')[-1] }}">
-        </video>   
-        {% endif %}
-
 
         <div class="body">
             <div>
@@ -75,10 +50,10 @@
             <p class="spotted">spotted: {{ post.sighting_date }} at {{ post.sighting_time }} ({{ post.duration }})</p>
             <p class="description">{{ post.content }}</p>
             </div>
-            <div id="{{ post.id }}" class="vote">
-                <p onclick="vote('{{ post.id }}', 1)">+1</p>
-                <p class="count">23</p>
-                <p onclick="vote('{{ post.id }}', 0)">-1</p>
+            <div id="{{ post.id }}" class="rating">
+                <p class="vote"  vote-type="upvote" post-id="{{ post.id }}">⬆️</p>
+                <p class="karma" style="text-align: center;">{{ post.karma }}</p>
+                <p class="vote"  vote-type="downvote" post-id="{{ post.id }}">⬇️</p>
             </div>
         </div>
     </div>

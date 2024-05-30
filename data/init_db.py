@@ -18,6 +18,10 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
         with open('init_tables.sql') as sql:
             cur.execute(sql.read())
 
+        # Run sql script to create the ratings trigger
+        with open('ratings_trigger.sql') as sql:
+            cur.execute(sql.read())
+
         # Load the cities data
         with open('cities.csv', 'r') as f:
             with cur.copy('''COPY Cities(city_name) 

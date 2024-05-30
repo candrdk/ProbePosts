@@ -29,6 +29,8 @@ class Post:
         self.poster_display_name = db.query_user_display_name(self.poster_id)
         self.poster_handle       = db.query_user_handle(self.poster_id)
 
+        self.karma           = db.query_post_karma(self.id)
+
         self.post_date       = post_data['post_date']
         self.sighting_date   = post_data['sighting_date']
         self.sighting_time   = post_data['sighting_time']

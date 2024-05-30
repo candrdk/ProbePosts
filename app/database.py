@@ -79,3 +79,27 @@ class Database:
         query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s;"
         self.dict_cursor.execute(query, (count, ))
         return self.dict_cursor.fetchall()
+
+    def query_rate_post(self, user_id, post_id, rating):
+        query = "INSERT INTO rate_view VALUES (%s, %s, %s)"
+        self.cursor.execute(query, (user_id, post_id, rating))
+        self.conn.commit()
+
+    def query_post_rating(self, user_id, post_id):
+        query = "SELECT rating FROM Ratings WHERE user_id = %s AND post_id = %s"
+        self.cursor.execute(query, (user_id, post_id))
+        if self.cursor.rowcount == 1:
+            return self.cursor.fetchone()[0]
+        else:
+            return None
+
+    def query_post_karma(self, post_id):
+        query = """SELECT
+            (SELECT COUNT(*) FROM Ratings WHERE post_id = %s AND rating=true)
+          - (SELECT COUNT(*) FROM Ratings WHERE post_id = %s AND rating=false) AS Karma"""
+
+        self.cursor.execute(query, (post_id, post_id))
+        if self.cursor.rowcount == 1:
+            return self.cursor.fetchone()[0]
+        else:
+            return 0
