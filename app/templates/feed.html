@@ -58,7 +58,17 @@
             <span class="handle"><a href="/@{{ post.poster_handle }}">@{{ post.poster_handle }}</a></span>
             <span class="posted">{{ post.post_date }}</span>
         </div>
+
+
+        {% if post.image_url.split(".")[-1] in ['jpeg', 'jpg', 'png'] %}
         <img class="image" loading="lazy" src="{{ post.image_url }}">
+        {% else %}
+        <video class="image" controls>
+            <source src="{{ post.image_url }}" type="video/{{ post.image_url.split('.')[-1] }}">
+        </video>   
+        {% endif %}
+
+
         <div class="body">
             <div>
             <p class="location">seen in: {{ post.city }}, {{ post.state_name }} (<a target="_blank" href="https://www.google.com/maps?q={{ post.latitude }},{{ post.longitude }}">{{ post.latitude }},{{ post.longitude }}</a>)</p>
