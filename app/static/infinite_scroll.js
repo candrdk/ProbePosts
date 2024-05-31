@@ -1,5 +1,3 @@
-
-const count = 10;
 let page_num = 0;
 
 function addPosts() {
