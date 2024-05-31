@@ -18,6 +18,12 @@ class Database:
         self.cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
+        print("------------------------")
+        print(self.conn)
+        print(self.cursor)
+        print(self.dict_cursor)
+        print("------------------------")
+
     def query_userdata_by_handle(self, handle):
         self.dict_cursor.execute("SELECT * FROM Users WHERE handle = %s;", (handle, ))
         return self.dict_cursor.fetchone() if self.dict_cursor.rowcount == 1 else None
@@ -75,9 +81,9 @@ class Database:
         else:
             return 'Unknown'
         
-    def query_recent_posts(self, count):
-        query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s;"
-        self.dict_cursor.execute(query, (count, ))
+    def query_recent_posts_page(self, post_count, page_num=0):
+        query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s OFFSET %s;"
+        self.dict_cursor.execute(query, (post_count, page_num))
         return self.dict_cursor.fetchall()
 
     def query_rate_post(self, user_id, post_id, rating):

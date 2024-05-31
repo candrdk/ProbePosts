@@ -13,10 +13,17 @@ from datetime import date
 @app.route('/index')
 @login_required
 def index():
-    posts_data = db.query_recent_posts(100)
-    posts = [Post(p) for p in posts_data]
+    posts_data = db.query_recent_posts_page(100)
+    posts = [Post(p, current_user.id) for p in posts_data]
 
     return render_template('index.html', title="Home", posts=posts)
+
+@app.route('/page/<page_num>', methods=['GET'])
+@login_required
+def page(page_num):
+    posts_data = db.query_recent_posts_page(10, page_num)
+    posts = [Post(p, current_user.id) for p in posts_data]
+    return render_template('page.html', posts=posts)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -102,7 +109,7 @@ def search():
     # TODO: USE FORM
     
     posts_data = db.query_recent_posts(3)
-    posts = [Post(p) for p in posts_data]
+    posts = [Post(p, current_user.id) for p in posts_data]
 
     return render_template('search.html', title="Search", form=form, posts=posts)
 
@@ -123,12 +130,8 @@ def profile(handle):
         "city":db.query_city_name(user.city_id)
     }
 
-    print(user.user_id)
-
     posts_data = db.query_posts_by_user_id(user.user_id)
-    posts = [Post(p) for p in posts_data]
-
-    print(len(posts))
+    posts = [Post(p, current_user.id) for p in posts_data]
 
     # TODO: load profile data from url
     # TODO: display all users posts underneath

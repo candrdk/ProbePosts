@@ -23,13 +23,14 @@ class User(UserMixin):
         self.city_id = user_data.get('city_id')
     
 class Post:
-    def __init__(self, post_data):
+    def __init__(self, post_data, user_id=None):
         self.id                  = post_data['id']
         self.poster_id           = post_data['poster_id']
         self.poster_display_name = db.query_user_display_name(self.poster_id)
         self.poster_handle       = db.query_user_handle(self.poster_id)
 
         self.karma           = db.query_post_karma(self.id)
+        self.user_rating     = None if user_id is None else db.query_post_rating(user_id, self.id)
 
         self.post_date       = post_data['post_date']
         self.sighting_date   = post_data['sighting_date']
