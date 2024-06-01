@@ -139,19 +139,14 @@ def profile(handle):
     return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
 
-@app.route('/upvote/<post_id>', methods=['GET'])
+@app.route('/<vote_type>/<post_id>', methods=['GET'])
 @login_required
-def upvote(post_id):
-    db.query_rate_post(current_user.id, post_id, True)
-    karma = db.query_post_karma(post_id)
-    rating = db.query_post_rating(current_user.id, post_id)
-    return render_template('post_rating.html', post_id=post_id, karma=karma, rating=rating)
+def upvote(vote_type, post_id):
+    if vote_type == 'upvote':
+        db.query_rate_post(current_user.id, post_id, True)
+    elif vote_type == 'downvote':
+        db.query_rate_post(current_user.id, post_id, False)
 
-
-@app.route('/downvote/<post_id>', methods=['GET'])
-@login_required
-def downvote(post_id):
-    db.query_rate_post(current_user.id, post_id, False)
     karma = db.query_post_karma(post_id)
     rating = db.query_post_rating(current_user.id, post_id)
     return render_template('post_rating.html', post_id=post_id, karma=karma, rating=rating)
