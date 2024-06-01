@@ -1,8 +1,9 @@
-from app import login, db
+from app import login, pgdb
 from flask_login import UserMixin
 
 @login.user_loader
-def load_user(id):
+@pgdb.connect
+def load_user(db, id):
     db.dict_cursor.execute("SELECT * FROM Users WHERE id = %s;", (id,))
     if db.dict_cursor.rowcount == 1:
         return User(db.dict_cursor.fetchone()) 
@@ -23,14 +24,15 @@ class User(UserMixin):
         self.city_id = user_data.get('city_id')
     
 class Post:
-    def __init__(self, post_data, user_id=None):
-        self.id                  = post_data['id']
+    def __init__(self, db, post_data, user_id=None):
+        self.id = post_data['id']
+
         self.poster_id           = post_data['poster_id']
         self.poster_display_name = db.query_user_display_name(self.poster_id)
         self.poster_handle       = db.query_user_handle(self.poster_id)
-
-        self.karma           = db.query_post_karma(self.id)
-        self.user_rating     = None if user_id is None else db.query_post_rating(user_id, self.id)
+        
+        self.user_rating         = None if user_id is None else db.query_post_rating(user_id, self.id)
+        self.karma               = db.query_post_karma(self.id)
 
         self.post_date       = post_data['post_date']
         self.sighting_date   = post_data['sighting_date']

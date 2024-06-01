@@ -4,7 +4,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import app, db
+from app import app, pgdb
 from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchForm
 from app.models import User, Post
 from datetime import date
@@ -13,20 +13,19 @@ from datetime import date
 @app.route('/index')
 @login_required
 def index():
-    posts_data = db.query_recent_posts_page(100)
-    posts = [Post(p, current_user.id) for p in posts_data]
+    return render_template('index.html', title="Home", posts=[])
 
-    return render_template('index.html', title="Home", posts=posts)
-
-@app.route('/page/<page_num>', methods=['GET'])
+@app.route('/page/<int:page_num>', methods=['GET'])
 @login_required
-def page(page_num):
+@pgdb.connect
+def page(db, page_num):
     posts_data = db.query_recent_posts_page(10, page_num)
-    posts = [Post(p, current_user.id) for p in posts_data]
+    posts = [Post(db, p, current_user.id) for p in posts_data]
     return render_template('page.html', posts=posts)
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+@pgdb.connect
+def login(db):
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -52,12 +51,14 @@ def login():
     return render_template('login.html', title="Sign In", form=form)
 
 @app.route('/logout')
-def logout():
+@pgdb.connect
+def logout(db):
     logout_user()
     return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
-def register():
+@pgdb.connect
+def register(db):
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
@@ -79,11 +80,12 @@ def register():
 
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
-def create_post():
+@pgdb.connect
+def create_post(db):
     form = CreatePostForm()
     
     if form.validate_on_submit():
-        p = Post({
+        p = Post(db, {
             'poster_id': current_user.id,
             'post_date': date.today(),
             'sighting_date': form.sightingDateTime.data.date(),
@@ -103,19 +105,20 @@ def create_post():
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
-def search():
+@pgdb.connect
+def search(db):
     form = CreateSearchForm()
 
     # TODO: USE FORM
     
     posts_data = db.query_recent_posts(3)
-    posts = [Post(p, current_user.id) for p in posts_data]
+    posts = [Post(db, p, current_user.id) for p in posts_data]
 
     return render_template('search.html', title="Search", form=form, posts=posts)
 
 @app.route('/@<handle>')
-def profile(handle):
-
+@pgdb.connect
+def profile(db, handle):
     user_data = db.query_userdata_by_handle(handle)
     if user_data is None:
         flash(f'No user exists with handle @{handle}')
@@ -131,7 +134,7 @@ def profile(handle):
     }
 
     posts_data = db.query_posts_by_user_id(user.user_id)
-    posts = [Post(p, current_user.id) for p in posts_data]
+    posts = [Post(db, p, current_user.id) for p in posts_data]
 
     # TODO: load profile data from url
     # TODO: display all users posts underneath
@@ -141,7 +144,8 @@ def profile(handle):
 
 @app.route('/<vote_type>/<post_id>', methods=['GET'])
 @login_required
-def upvote(vote_type, post_id):
+@pgdb.connect
+def upvote(db, vote_type, post_id):
     if vote_type == 'upvote':
         db.query_rate_post(current_user.id, post_id, True)
     elif vote_type == 'downvote':

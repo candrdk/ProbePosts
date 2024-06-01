@@ -1,8 +1,10 @@
 import os
 import psycopg
+from psycopg_pool import ConnectionPool
 from dotenv import load_dotenv
+from contextlib import contextmanager
 
-class Database:
+class PostgresDB:
     def __init__(self):
         load_dotenv()
 
@@ -14,7 +16,28 @@ class Database:
             password={os.getenv('DB_PASSWORD')}
         '''
 
-        self.conn = psycopg.connect(connection_string)
+        self.pool = ConnectionPool(connection_string)
+
+    @contextmanager
+    def connection(self):
+        with self.pool.connection() as conn:
+            yield DBConnection(conn)
+
+    def connect(self, func):
+        def decorator(*args, **kwargs):
+            with self.connection() as db:
+                return func(db, *args, **kwargs)
+
+        # To avoid errors with flask registering functions
+        # with the pgdb.connect name instead of the name of
+        # the decorated function, we have to set the name
+        # of the decorator to the decorated function name.
+        decorator.__name__ = func.__name__
+        return decorator
+
+class DBConnection:
+    def __init__(self, conn):
+        self.conn = conn
         self.cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
@@ -44,7 +67,7 @@ class Database:
     def insert_post(self, post):
         query = """INSERT INTO
         Posts(poster_id, post_date, sighting_date, sighting_time, state_code, city_id, duration, summary, image_url, latitude, longitude)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         self.cursor.execute(query, (post.poster_id, post.post_date, post.sighting_date,
                                      post.sighting_time, post.state_code, post.city_id,
@@ -77,16 +100,16 @@ class Database:
         
     def query_recent_posts_page(self, post_count, page_num=0):
         query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s OFFSET %s;"
-        self.dict_cursor.execute(query, (post_count, page_num))
+        self.dict_cursor.execute(query, (post_count, page_num * post_count))
         return self.dict_cursor.fetchall()
 
     def query_rate_post(self, user_id, post_id, rating):
-        query = "INSERT INTO rate_view VALUES (%s, %s, %s)"
+        query = "INSERT INTO rate_view VALUES (%s, %s, %s);"
         self.cursor.execute(query, (user_id, post_id, rating))
         self.conn.commit()
 
     def query_post_rating(self, user_id, post_id):
-        query = "SELECT rating FROM Ratings WHERE user_id = %s AND post_id = %s"
+        query = "SELECT rating FROM Ratings WHERE user_id = %s AND post_id = %s;"
         self.cursor.execute(query, (user_id, post_id))
         if self.cursor.rowcount == 1:
             return self.cursor.fetchone()[0]
@@ -96,7 +119,7 @@ class Database:
     def query_post_karma(self, post_id):
         query = """SELECT
             (SELECT COUNT(*) FROM Ratings WHERE post_id = %s AND rating=true)
-          - (SELECT COUNT(*) FROM Ratings WHERE post_id = %s AND rating=false) AS Karma"""
+          - (SELECT COUNT(*) FROM Ratings WHERE post_id = %s AND rating=false) AS Karma;"""
 
         self.cursor.execute(query, (post_id, post_id))
         if self.cursor.rowcount == 1:

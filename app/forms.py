@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional, Length
 
-from app import db
+from app import pgdb
 
 class LoginForm(FlaskForm):
     handle = StringField('Handle', validators=[DataRequired()])
@@ -15,18 +15,26 @@ class LoginForm(FlaskForm):
 # If not present in database, insert the new city
 # before inserting the user or post.
 
+@pgdb.connect
+def get_states(db):
+    return db.query_states()
+
+@pgdb.connect
+def get_cities(db):
+    return db.query_states()
+
 class RegistrationForm(FlaskForm):
     handle = StringField('Handle', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     password_repeat = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
     state   = SelectField('State', validators=[Optional()],
-                          choices=([('', '---')] + db.query_states()))
+                          choices=([('', '---')] + get_states()))
     city    = SelectField('City', validators=[Optional()],
-                          choices=([('', '---')] + db.query_cities()))
+                          choices=([('', '---')] + get_cities()))
     
     def validate_handle(self, handle):
-        userdata = db.query_userdata_by_handle(handle.data)
+        userdata = pgdb.cursor.query_userdata_by_handle(handle.data)
         if userdata is not None:
             raise ValidationError('Handle already taken!')
         
@@ -48,9 +56,9 @@ class CreatePostForm(FlaskForm):
     sightingDuration = StringField("The duration of the sighting", validators=[DataRequired()])
 
     state = SelectField('State', validators=[Optional()],
-                        choices=([('', '---')]+db.query_states()))
+                        choices=([('', '---')] + get_states()))
     city = SelectField('City', validators=[Optional()],
-                        choices=([('', '---')]+db.query_cities()))
+                        choices=([('', '---')] + get_cities()))
 
     latField = FloatField('Sighting latitude', validators=[Optional()])
     lonField = FloatField('Sighting longitude', validators=[Optional()])
