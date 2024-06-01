@@ -1,15 +1,12 @@
 {% extends "feed.html" %}
 
-
-
-
 {% block header %}
-<h1 class="profiletitle">{{ user.displayname }}</h1>
-<p class="handle">@{{ user.handle }}</p>
+    <h1 class="profiletitle">{{ user.displayname }}</h1>
+    <p class="handle">@{{ user.handle }}</p>
 
-<p class="location">{{ user.state }}, {{ user.city }}</p>
+    <p class="location">{{ user.state }}, {{ user.city }}</p>
 
-<hr>
+    <hr>
 {% endblock %}
 
 

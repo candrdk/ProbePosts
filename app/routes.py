@@ -145,7 +145,7 @@ def upvote(post_id):
     db.query_rate_post(current_user.id, post_id, True)
     karma = db.query_post_karma(post_id)
     rating = db.query_post_rating(current_user.id, post_id)
-    return jsonify({'post_id': post_id, 'karma': karma, 'rating': rating})
+    return render_template('post_rating.html', post_id=post_id, karma=karma, rating=rating)
 
 
 @app.route('/downvote/<post_id>', methods=['GET'])
@@ -154,4 +154,4 @@ def downvote(post_id):
     db.query_rate_post(current_user.id, post_id, False)
     karma = db.query_post_karma(post_id)
     rating = db.query_post_rating(current_user.id, post_id)
-    return jsonify({'post_id': post_id, 'karma': karma, 'rating': rating})
+    return render_template('post_rating.html', post_id=post_id, karma=karma, rating=rating)

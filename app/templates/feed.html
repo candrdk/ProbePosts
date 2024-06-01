@@ -10,25 +10,7 @@
                 var post_id = $(ev.currentTarget).attr('post-id');
 
                 $.get('/' + vote_type + '/' + post_id, function(data) {
-                    $('.karma').text(data['karma']);
-                    $('#' + post_id + ' .vote').each(function() {
-                        var $thisVote = $(this);
-                        if ($thisVote.attr('vote-type') === 'upvote') {
-                            if (data['rating'] == null) {
-                                $thisVote.text("⬆️");
-                            }
-                            else {
-                                $thisVote.text(data['rating'] ? "✅" : "⬆️");
-                            }
-                        } else if ($thisVote.attr('vote-type') === 'downvote') {
-                            if (data['rating'] == null) {
-                                $thisVote.text("⬇️");
-                            }
-                            else {
-                                $thisVote.text(data['rating'] ? "⬇️" : "❌");
-                            }
-                        }
-                    });
+                    $(ev.target).parent().html(data);
                 });
             });
         });
