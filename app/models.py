@@ -4,11 +4,8 @@ from flask_login import UserMixin
 @login.user_loader
 @pgdb.connect
 def load_user(db, id):
-    db.dict_cursor.execute("SELECT * FROM Users WHERE id = %s;", (id,))
-    if db.dict_cursor.rowcount == 1:
-        return User(db.dict_cursor.fetchone()) 
-    else:
-        return None
+    user_data = db.query_userdata_by_id(id)
+    return None if user_data is None else User(user_data)
 
 class User(UserMixin):
     @property

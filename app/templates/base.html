@@ -22,12 +22,9 @@
                 <h2><a href="{{ url_for('register') }}">Register</a></h2>
             {% else %}
                 <h2><a href="/">Home</a></h2>
-                <h2><a href="/explore">Explore</a></h2>
                 <h2><a href="/following">Following</a></h2>
-                <hr>
-                <h2><a href="{{ url_for('create_post') }}">Create Post</a></h2>
-                <hr>
                 <h2><a href="/@{{ current_user.display_name }}">Profile</a></h2>
+                <h2><a href="{{ url_for('create_post') }}">Create Post</a></h2>
                 <hr>
                 <h2><a href="{{ url_for('logout') }}">Logout</a></h2>
             {% endif %}

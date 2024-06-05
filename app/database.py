@@ -41,6 +41,10 @@ class DBConnection:
         self.cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
+    def query_userdata_by_id(self, id):
+        self.dict_cursor.execute("SELECT * FROM Users WHERE id = %s;", (id, ))
+        return self.dict_cursor.fetchone() if self.dict_cursor.rowcount == 1 else None
+
     def query_userdata_by_handle(self, handle):
         self.dict_cursor.execute("SELECT * FROM Users WHERE handle = %s;", (handle, ))
         return self.dict_cursor.fetchone() if self.dict_cursor.rowcount == 1 else None
@@ -53,6 +57,10 @@ class DBConnection:
         self.cursor.execute("SELECT handle FROM Users WHERE id = %s;", (user_id, ))
         return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
     
+    def query_user_id(self, user_handle):
+        self.cursor.execute("SELECT id FROM Users WHERE handle = %s;", (user_handle, ))
+        return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
+
     def query_posts_by_user_id(self, user_id):
         self.dict_cursor.execute("SELECT * FROM Posts WHERE poster_id = %s ORDER BY post_date DESC;", (user_id, ))
         return self.dict_cursor.fetchall()
@@ -101,6 +109,11 @@ class DBConnection:
     def query_recent_posts_page(self, post_count, page_num=0):
         query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s OFFSET %s;"
         self.dict_cursor.execute(query, (post_count, page_num * post_count))
+        return self.dict_cursor.fetchall()
+
+    def query_recent_posts_by_user_page(self, user_id, post_count, page_num=0):
+        query = "SELECT * FROM Posts WHERE poster_id = %s ORDER BY post_date DESC LIMIT %s OFFSET %s;"
+        self.dict_cursor.execute(query, (user_id, post_count, page_num * post_count))
         return self.dict_cursor.fetchall()
 
     def query_rate_post(self, user_id, post_id, rating):

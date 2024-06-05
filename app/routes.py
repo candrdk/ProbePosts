@@ -10,7 +10,6 @@ from app.models import User, Post
 from datetime import date
 
 @app.route('/')
-@app.route('/index')
 @login_required
 def index():
     return render_template('index.html', title="Home", posts=[])
@@ -18,7 +17,7 @@ def index():
 @app.route('/page/<int:page_num>', methods=['GET'])
 @login_required
 @pgdb.connect
-def page(db, page_num):
+def home_page(db, page_num):
     posts_data = db.query_recent_posts_page(10, page_num)
     posts = [Post(db, p, current_user.id) for p in posts_data]
     return render_template('page.html', posts=posts)
@@ -141,6 +140,14 @@ def profile(db, handle):
 
     return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
+@app.route('/@<handle>/page/<int:page_num>', methods=['GET'])
+@login_required
+@pgdb.connect
+def user_page(db, handle, page_num):
+    user_id = db.query_user_id(handle)
+    posts_data = db.query_recent_posts_by_user_page(user_id, 10, page_num)
+    posts = [Post(db, p, current_user.id) for p in posts_data]
+    return render_template('page.html', posts=posts)
 
 @app.route('/<vote_type>/<post_id>', methods=['GET'])
 @login_required
