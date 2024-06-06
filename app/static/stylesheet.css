@@ -128,7 +128,7 @@ textarea {
     resize: none
 }
 
-input[type=text], input[type=password], input[type=datetime-local], textarea {
+input[type=text], input[type=password], input[type=datetime-local], input[type=url], textarea {
     width: 100%;
     padding: 10px 10px;
     margin: 8px 0;

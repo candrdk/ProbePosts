@@ -69,13 +69,13 @@ def register(db):
             'display_name': form.handle.data,
             'password_hash': generate_password_hash(form.password.data),
             'state_code': None if form.state.data == '' else form.state.data,
-            'city_id':  None if form.city.data  == '' else form.city.data
+            'city_id':  None if form.city_id == '' else form.city_id
         }))
 
         flash('You are now a registered user!')
         return redirect(url_for('login'))
 
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title='Register', cities=db.query_cities(), form=form)
 
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required
@@ -90,16 +90,18 @@ def create_post(db):
             'sighting_date': form.sightingDateTime.data.date(),
             'sighting_time': form.sightingDateTime.data.time(),
             'state_code': None if form.state.data == '' else form.state.data,
-            'city_id':  None if form.city.data == '' else form.city.data,
+            'city_id': form.city_id,
             'summary': form.summary.data, 
             'duration': form.sightingDuration.data,
             'image_url': form.imageUrl.data,
             'latitude': form.latField.data,
             'longitude': form.lonField.data
         })
+
         db.insert_post(p)
         return redirect(url_for('index'))
-    return render_template('create_post.html', title='Create Post', form=form)
+
+    return render_template('create_post.html', title='Create Post', cities=db.query_cities(), form=form)
 
 
 @app.route('/search', methods=['GET', 'POST'])

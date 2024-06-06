@@ -10,7 +10,13 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        
+        <p>
+            {{ form.imageUrl.label }} <br>
+            {{ form.imageUrl(size=128) }} <br>
+            {% for error in form.summary.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
         <p>
             {{ form.sightingDateTime.label }} <br>
             {{ form.sightingDateTime(class='datePicker') }} <br>
@@ -32,7 +38,7 @@
             </p>
             <p>
                 {{ form.city.label }} <br>
-                {{ form.city }} <br>
+                {{ form.city(list="cities") }} <br>
             </p>
         </div>
         <div class="selects">
@@ -54,7 +60,12 @@
         <p>
             {{ form.post() }}
         </p>
-        
     </form>
+    
+    <datalist id="cities">
+        {% for city in cities %}
+            <option value="{{ city }}"></option>
+        {% endfor %}
+    </datalist>
 {% endblock %}
 

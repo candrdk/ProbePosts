@@ -87,8 +87,8 @@ class DBConnection:
         return self.cursor.fetchall()
 
     def query_cities(self):
-        self.cursor.execute("SELECT id, city_name FROM Cities;")
-        return self.cursor.fetchall()
+        self.cursor.execute("SELECT city_name FROM Cities;")
+        return [city for (city,) in self.cursor.fetchall()]
     
     def query_state_name(self, state_code):
         query = "SELECT state_name FROM States WHERE state_code = %s;"
@@ -106,6 +106,30 @@ class DBConnection:
         else:
             return 'Unknown'
         
+    def query_city_id(self, city):
+        self.cursor.execute("SELECT id FROM Cities WHERE city_name = %s;", (city, ))
+        if self.cursor.rowcount == 1:
+            return self.cursor.fetchone()[0]
+        else:
+            return None
+
+    def insert_city(self, city):
+        self.cursor.execute("INSERT INTO Cities(city_name) VALUES (%s);", (city, ))
+        self.conn.commit()
+
+    def query_or_insert_city_get_id(self, city_raw):
+        if city_raw == '':
+            return None
+
+        city = city_raw.title()
+        city_id = self.query_city_id(city)
+
+        if city_id is None:
+            self.insert_city(city)
+            city_id = self.query_city_id(city)
+        
+        return city_id
+
     def query_recent_posts_page(self, post_count, page_num=0):
         query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s OFFSET %s;"
         self.dict_cursor.execute(query, (post_count, page_num * post_count))

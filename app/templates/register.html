@@ -28,11 +28,11 @@
         <div class="selects">
             <p>
                 {{ form.state.label }} <br>
-                {{ form.state  }}
+                {{ form.state }}
             </p>
             <p>
                 {{ form.city.label }} <br>
-                {{ form.city  }} <br>
+                {{ form.city(list="cities") }} <br>
             </p>
         </div>
         {% for error in form.state.errors %}
@@ -47,4 +47,10 @@
     </form>
 
     <p>Already Registered? <a href="{{ url_for('login') }}">Click to Sign In!</a></p>
+
+    <datalist id="cities">
+        {% for city in cities %}
+            <option value="{{ city }}"></option>
+        {% endfor %}
+    </datalist>
 {% endblock %}
