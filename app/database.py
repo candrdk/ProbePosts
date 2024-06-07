@@ -2,8 +2,10 @@ import os
 import psycopg
 import re
 from psycopg_pool import ConnectionPool
+from psycopg import sql
 from dotenv import load_dotenv
 from contextlib import contextmanager
+from datetime import datetime
 
 class PostgresDB:
     def __init__(self):
@@ -173,30 +175,40 @@ class DBConnection:
             return None
 
     def query_search_posts_page(self, q, post_count, page_num=0):
+        if q == '': return []   # query must have some value
 
-        # list of tags we look out for and their corresponding sql 
-        tags = [
-            (r'state:(\w+)'               , lambda x:f"state = '{self.query_state_code(x)}'"),
-            (r'city:(\w+)'                , lambda x:f"city = {self.query_city_id(x)}"),
-            (r'before:(\d{4}-\d{2}-\d{2})', lambda x:f"post_date < '{x}'"),
-            (r'after:(\d{4}-\d{2}-\d{2})' , lambda x:f"post_date > '{x}'"),
-            (r'from:(\w+)'                , lambda x:f"poster_id = {self.query_user_id(x)}"),
+        # List of patterns that can be matched in a search query.
+        # Kind of messy, since we have to be careful with to avoid SQL injection.
+        pattern = [
+            (r'state:(\w+)'               , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('statec_code'), value=sql.Literal(self.query_state_code(x.title())))),
+            (r'city:(\w+)'                , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('city_id'),     value=sql.Literal(self.query_city_id(x.title())))),
+            (r'before:(\d{4}-\d{2}-\d{2})', lambda x: sql.SQL('{field} < {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
+            (r'after:(\d{4}-\d{2}-\d{2})' , lambda x: sql.SQL('{field} > {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
+            (r'before:(\d{4})'            , lambda x: sql.SQL('{field} < {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y')))),
+            (r'after:(\d{4})'             , lambda x: sql.SQL('{field} > {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y')))),
+            (r'from:(\w+)'                , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('poster_id'),   value=sql.Literal(self.query_user_id(x))))
         ]
 
-        d = []
-        for (regex, func) in tags:              # for all possible tags
-            match = re.search(regex, q)         # is it in query with right format?
+        d = [sql.SQL('summary ILIKE %(search)s')]
+        for (regex, func) in pattern:           # Check if the query contains any
+            match = re.search(regex, q)         # of the supported patterns. 
             if match:           
-                d += [func(match.group(1))]     # add the sql to the list
-                q = re.sub(regex, '', q)        # and remove it from the query
+                d += [func(match.group(1))]     # Add the SQL condition to d
+                q = re.sub(regex, '', q)        # and remove it from the query.
 
-        d += [f"summary ILIKE '%{q.strip()}%'"] # match summary with rest of query
 
-        query = "SELECT * FROM Posts "
-        query += ('WHERE '+' AND '.join(d)) if len(d) else ''
-        query += f" ORDER BY post_date DESC LIMIT {post_count} OFFSET {page_num * post_count};"
+        # Retrieve a page of count posts matching the conditions of the search query
+        query = sql.SQL('''SELECT * FROM Posts
+                           WHERE {conditions}
+                           ORDER BY post_date DESC
+                           LIMIT %(count)s
+                           OFFSET %(page)s;''').format(conditions=sql.SQL(' AND ').join(d))
 
-        self.dict_cursor.execute(query)
+        # Any part of the string that didn't match any patterns is
+        # assumed to be a simple search of the summary text of posts.
+        params = {'search': f'%{q.strip()}%',
+                  'count': post_count,
+                  'page': page_num * post_count}
+
+        self.dict_cursor.execute(query, params)
         return self.dict_cursor.fetchall()
-
-
