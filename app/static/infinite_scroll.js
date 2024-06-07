@@ -5,7 +5,11 @@ let page_num = 0;
 function addPosts() {
     if (page_num < 0) { return; }
 
-    $.get(window.location.href + '/page/' + page_num, function(data) {
+    let loc = window.location.href;
+    if (loc.lastIndexOf('?') == -1) loc = loc+'/page/'+page_num;
+    else loc = loc.replaceAll(/\?/g, '/page/'+page_num+'?'); 
+
+    $.get(loc, function(data) {
         if (data) { 
             $('#page_end_marker').before(data);
         }
@@ -18,7 +22,7 @@ function addPosts() {
 }
 
 const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
         if (entry.isIntersecting) {
             addPosts();
         }

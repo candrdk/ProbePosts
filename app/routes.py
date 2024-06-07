@@ -9,6 +9,21 @@ from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchF
 from app.models import User, Post
 from datetime import date
 
+
+@app.context_processor
+def inject_search_form():
+    return dict(searchform=CreateSearchForm())
+
+@app.before_request
+def handle_searchform_submission():
+    if request.method == 'POST' and 'search' in request.form:
+            form_data = request.form['search']
+            # Redirect to a specific route or handle as needed
+            return redirect(url_for('search') + f'?q={form_data}')
+
+
+
+
 @app.route('/')
 @login_required
 def index():
@@ -104,18 +119,20 @@ def create_post(db):
     return render_template('create_post.html', title='Create Post', cities=db.query_cities(), form=form)
 
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
+@login_required
+def search():
+    query = request.args.get('q')
+    return render_template('search.html', title="Search", posts=[], searchvalue=query)
+
+@app.route('/search/page/<int:page_num>', methods=['GET'])
 @login_required
 @pgdb.connect
-def search(db):
-    form = CreateSearchForm()
-
-    # TODO: USE FORM
-    
-    posts_data = db.query_recent_posts(3)
+def search_page(db, page_num):
+    query = request.args.get('q')
+    posts_data = db.query_search_posts_page(query, 10, page_num)
     posts = [Post(db, p, current_user.id) for p in posts_data]
-
-    return render_template('search.html', title="Search", form=form, posts=posts)
+    return render_template('page.html', posts=posts)
 
 @app.route('/@<handle>')
 @pgdb.connect

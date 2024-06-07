@@ -1,5 +1,6 @@
 import os
 import psycopg
+import re
 from psycopg_pool import ConnectionPool
 from dotenv import load_dotenv
 from contextlib import contextmanager
@@ -163,3 +164,39 @@ class DBConnection:
             return self.cursor.fetchone()[0]
         else:
             return 0
+        
+    def query_state_code(self, state):
+        self.cursor.execute("SELECT state_code FROM States WHERE state_name = %s;", (state, ))
+        if self.cursor.rowcount == 1:
+            return self.cursor.fetchone()[0]
+        else:
+            return None
+
+    def query_search_posts_page(self, q, post_count, page_num=0):
+
+        # list of tags we look out for and their corresponding sql 
+        tags = [
+            (r'state:(\w+)'               , lambda x:f"state = '{self.query_state_code(x)}'"),
+            (r'city:(\w+)'                , lambda x:f"city = {self.query_city_id(x)}"),
+            (r'before:(\d{4}-\d{2}-\d{2})', lambda x:f"post_date < '{x}'"),
+            (r'after:(\d{4}-\d{2}-\d{2})' , lambda x:f"post_date > '{x}'"),
+            (r'from:(\w+)'                , lambda x:f"poster_id = {self.query_user_id(x)}"),
+        ]
+
+        d = []
+        for (regex, func) in tags:              # for all possible tags
+            match = re.search(regex, q)         # is it in query with right format?
+            if match:           
+                d += [func(match.group(1))]     # add the sql to the list
+                q = re.sub(regex, '', q)        # and remove it from the query
+
+        d += [f"summary ILIKE '%{q.strip()}%'"] # match summary with rest of query
+
+        query = "SELECT * FROM Posts "
+        query += ('WHERE '+' AND '.join(d)) if len(d) else ''
+        query += f" ORDER BY post_date DESC LIMIT {post_count} OFFSET {page_num * post_count};"
+
+        self.dict_cursor.execute(query)
+        return self.dict_cursor.fetchall()
+
+

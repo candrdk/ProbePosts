@@ -43,6 +43,12 @@
                 {% endif %}
                 {% endwith %}
             </div>
+            <form class="search" action="" method="post" novalidate>
+                {{ searchform.hidden_tag() }}
+                {{ searchform.search(size=256, value=searchvalue) }}
+        
+                {{ searchform.submit() }}
+            </form>
             {% block header %}{% endblock %}
             {% block content %}{% endblock %}
         </div>
