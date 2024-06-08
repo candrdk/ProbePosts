@@ -1,10 +1,1 @@
-{% extends "base.html" %}
-
-{% block header %}
-    <form class="search" action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.search(size=32) }}
-
-        {{ form.submit() }}
-    </form>
-{% endblock %}
+{% extends "feed.html" %}

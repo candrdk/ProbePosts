@@ -1,9 +1,11 @@
 import os
 import psycopg
-from psycopg import cursor
+import re
 from psycopg_pool import ConnectionPool
+from psycopg import sql
 from dotenv import load_dotenv
 from contextlib import contextmanager
+from datetime import datetime
 
 class PostgresDB:
     def __init__(self):
@@ -172,3 +174,48 @@ class DBConnection:
         self.cursor.execute(query,(poster_id, ))
         return self.cursor.fetchmany(10)
         
+        
+    def query_state_code(self, state):
+        self.cursor.execute("SELECT state_code FROM States WHERE state_name = %s;", (state, ))
+        if self.cursor.rowcount == 1:
+            return self.cursor.fetchone()[0]
+        else:
+            return None
+
+    def query_search_posts_page(self, q, post_count, page_num=0):
+
+        # List of patterns that can be matched in a search query.
+        # Kind of messy, since we have to be careful with to avoid SQL injection.
+        pattern = [
+            (r'state:(\w+)'               , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('statec_code'), value=sql.Literal(self.query_state_code(x.title())))),
+            (r'city:(\w+)'                , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('city_id'),     value=sql.Literal(self.query_city_id(x.title())))),
+            (r'before:(\d{4}-\d{2}-\d{2})', lambda x: sql.SQL('{field} < {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
+            (r'after:(\d{4}-\d{2}-\d{2})' , lambda x: sql.SQL('{field} > {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
+            (r'before:(\d{4})'            , lambda x: sql.SQL('{field} < {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y')))),
+            (r'after:(\d{4})'             , lambda x: sql.SQL('{field} > {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y')))),
+            (r'from:(\w+)'                , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('poster_id'),   value=sql.Literal(self.query_user_id(x))))
+        ]
+
+        d = [sql.SQL('summary ILIKE %(search)s')]
+        for (regex, func) in pattern:           # Check if the query contains any
+            match = re.search(regex, q)         # of the supported patterns. 
+            if match:           
+                d += [func(match.group(1))]     # Add the SQL condition to d
+                q = re.sub(regex, '', q)        # and remove it from the query.
+
+
+        # Retrieve a page of count posts matching the conditions of the search query
+        query = sql.SQL('''SELECT * FROM Posts
+                           WHERE {conditions}
+                           ORDER BY post_date DESC
+                           LIMIT %(count)s
+                           OFFSET %(page)s;''').format(conditions=sql.SQL(' AND ').join(d))
+
+        # Any part of the string that didn't match any patterns is
+        # assumed to be a simple search of the summary text of posts.
+        params = {'search': f'%{q.strip()}%',
+                  'count': post_count,
+                  'page': page_num * post_count}
+
+        self.dict_cursor.execute(query, params)
+        return self.dict_cursor.fetchall()

@@ -59,5 +59,5 @@ class CreatePostForm(FlaskForm):
             self.city_id = db.query_or_insert_city_get_id(city.data)
 
 class CreateSearchForm(FlaskForm):
-    search = StringField('Searchfield', validators=[DataRequired()], render_kw={"placeholder": "Search..."})
+    search = StringField('Searchfield', validators=[DataRequired()], render_kw={"placeholder": "Search...", "autocomplete": "off"})
     submit = SubmitField('Search')
