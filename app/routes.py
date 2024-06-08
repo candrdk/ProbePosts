@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, pgdb
 from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchForm
 from app.models import User, Post
+from app.database import DBConnection
 from datetime import date
 
 @app.route('/')
@@ -141,6 +142,16 @@ def profile(db, handle):
     # TODO: display all users posts underneath
 
     return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
+
+@app.route('/@<handle>/likes', methods=['GET'])
+@login_required
+@pgdb.connect
+def user_likes(db: DBConnection, handle):
+    user_id = db.query_user_id(handle)
+    posts_data = db.query_user_liked_posts(user_id)
+    posts = [Post(db, p, current_user.id) for p in posts_data]
+    return render_template('feed.html', posts=posts)
+
 
 @app.route('/@<handle>/page/<int:page_num>', methods=['GET'])
 @login_required

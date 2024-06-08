@@ -1,5 +1,6 @@
 import os
 import psycopg
+from psycopg import cursor
 from psycopg_pool import ConnectionPool
 from dotenv import load_dotenv
 from contextlib import contextmanager
@@ -38,7 +39,7 @@ class PostgresDB:
 class DBConnection:
     def __init__(self, conn):
         self.conn = conn
-        self.cursor = self.conn.cursor()
+        self.cursor:cursor.Cursor = self.conn.cursor()
         self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
     def query_userdata_by_id(self, id):
@@ -163,3 +164,11 @@ class DBConnection:
             return self.cursor.fetchone()[0]
         else:
             return 0
+
+    def query_user_liked_posts(self, poster_id:int):
+        query = """
+                select p.* from posts p join ratings r on p.id = r.post_id where r.user_id = %s;
+                """
+        self.cursor.execute(query,(poster_id, ))
+        return self.cursor.fetchmany(10)
+        
