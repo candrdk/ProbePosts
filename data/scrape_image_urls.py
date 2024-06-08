@@ -14,7 +14,7 @@ def fetch_img_url(url):
 
     soup = BeautifulSoup(response.text, 'html.parser')
     img_tags = soup.find_all('img')
-    img_url = 'https://friddo.dk/assets/favicon.svg'
+    img_url = 'https://picsum.photos/512'
 
     for img in img_tags:
         img_url = img.get('src')
