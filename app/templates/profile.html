@@ -6,7 +6,10 @@
 
     <p class="location">{{ user.state }}, {{ user.city }}</p>
     
-    <h2><a href="@{{ user.handle }}/likes">Likes</a></h2>
+    <div>
+        <h2><a href="/@{{ user.handle }}">All posts</a></h2>
+        <h2><a href="/@{{ user.handle }}/likes">Liked posts</a></h2>
+    </div>
     <hr>
 {% endblock %}
 

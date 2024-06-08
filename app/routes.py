@@ -164,10 +164,27 @@ def profile(db, handle):
 @login_required
 @pgdb.connect
 def user_likes(db: DBConnection, handle):
-    user_id = db.query_user_id(handle)
-    posts_data = db.query_user_liked_posts(user_id)
+    user_data = db.query_userdata_by_handle(handle)
+    if user_data is None:
+        flash(f'No user exists with handle @{handle}')
+        return redirect(url_for(f'/@{handle}'))
+    
+    user = User(user_data)
+
+    profile_data = {
+        "displayname":user.display_name,
+        "handle":user.handle,
+        "state":db.query_state_name(user.state_code),
+        "city":db.query_city_name(user.city_id)
+    }
+
+    posts_data = db.query_user_liked_posts(user.user_id)
     posts = [Post(db, p, current_user.id) for p in posts_data]
-    return render_template('feed.html', posts=posts)
+
+    # TODO: load profile data from url
+    # TODO: display all users posts underneath
+
+    return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
 
 @app.route('/@<handle>/page/<int:page_num>', methods=['GET'])
