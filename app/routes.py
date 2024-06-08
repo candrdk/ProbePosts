@@ -187,6 +187,16 @@ def user_likes(db: DBConnection, handle):
     return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
 
+@app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])
+@login_required
+@pgdb.connect
+def user_likes_page(db, handle, page_num):
+    user_id = db.query_user_id(handle)
+    posts_data = db.query_user_liked_posts_page(user_id, 10, page_num)
+    posts = [Post(db, p, current_user.id) for p in posts_data]
+    return render_template('page.html', posts=posts)
+
+
 @app.route('/@<handle>/page/<int:page_num>', methods=['GET'])
 @login_required
 @pgdb.connect
