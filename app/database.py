@@ -175,7 +175,6 @@ class DBConnection:
             return None
 
     def query_search_posts_page(self, q, post_count, page_num=0):
-        if q == '': return []   # query must have some value
 
         # List of patterns that can be matched in a search query.
         # Kind of messy, since we have to be careful with to avoid SQL injection.
