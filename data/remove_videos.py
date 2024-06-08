@@ -26,8 +26,8 @@ cleaned = [a for a in zipped if (a[1].split('.')[-1] in ['jpg','jpeg','png'] and
 
 with open("dataset_raw.csv", "w") as raw, open("image_urls.csv", "w") as img:
 
-    raw.write(raw_lines[0])
-    img.write(img_lines[0])
+    raw.write(raw_lines[0] + '\n')
+    img.write(img_lines[0] + '\n')
 
     raw.write('\n'.join(a[0] for a in cleaned))
     img.write('\n'.join(a[1] for a in cleaned))
