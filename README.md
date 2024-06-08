@@ -33,7 +33,7 @@ $ flask run
 ProbePosts should then be available at https://localhost:5000/
 
 ## Generating datasets
-The raw UFO sightings dataset we are using for this project can be found in `/data/raw/dataset_raw.csv`. The dataset is a scrape of UFO sighting reports from https://nuforc.org and is publically available on [Kaggle](https://www.kaggle.com/datasets/joebeachcapital/ufo-sightings/data). Since image urls are not included in the dataset, we scrape them ourselves from [nuforc](https://nuforc.org) using the `/data/raw/scrape_image_urls.py` script, which will generate `/data/raw/image_urls_raw.csv`.
+The raw UFO sightings dataset we are using for this project can be found in `/data/raw/dataset_raw.csv`. The dataset is a scrape of UFO sighting reports from https://nuforc.org and is publically available on [Kaggle](https://www.kaggle.com/datasets/joebeachcapital/ufo-sightings/data). Since image urls are not included in the dataset, we scrape them ourselves from [nuforc](https://nuforc.org) using the `/data/raw/scrape_image_urls.py` script, which generates `/data/raw/image_urls_raw.csv`.
 
 > Scraping these images takes a *long* time. You shouldn't have to touch or run any of the files in `/data/raw/` unless you want to significantly alter the structure of the database.
 
