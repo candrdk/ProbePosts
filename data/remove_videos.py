@@ -1,6 +1,3 @@
-
-
-
 known_404 = [
     "https://nuforc.org/wp-content/uploads/wpforms/132-f1345440b16f33e415e847fc9d582913/8483F186-F115-413C-8753-3F018AC6EB2F-3991f21548560e00c72afff10f709f21.jpeg",
     "https://nuforc.org/wp-content/uploads/wpforms/132-f1345440b16f33e415e847fc9d582913/65FFE8D0-63A1-496F-9273-18455CFB1237-76c3b44ec73fda54fee789240b7b62dd.png",
