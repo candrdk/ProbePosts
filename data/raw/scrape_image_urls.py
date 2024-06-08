@@ -21,12 +21,15 @@ def fetch_img_url(url):
         if '/wp-content/uploads/wpforms' in img_url:
             break
 
-    return img_url
+    return {'image_url': img_url}
 
 with open('dataset_raw.csv', 'r', newline='', encoding='utf-8') as dataset, \
-     open('image_urls.csv',  'w', newline='', encoding='utf-8') as img_urls:
+     open('image_urls_raw.csv',  'w', newline='', encoding='utf-8') as img_urls:
     reader = csv.DictReader(dataset)
-    img_urls.write("image_url\n")
+    writer = csv.DictWriter(img_urls, ['image_url'])
+
+    writer.writeheader()
+
     for i, row in enumerate(reader):
         print(f"Fetching image url for post {i}")
-        img_urls.write(fetch_img_url(row['img_link']) + '\n')
+        writer.writerow(fetch_img_url(row['img_link']))

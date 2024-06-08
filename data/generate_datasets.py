@@ -1,7 +1,7 @@
 from csv import DictReader, DictWriter
 from datetime import datetime, timedelta
 from random import randint, choices
-from os import path
+import os
 from random_username.generate import generate_username 
 from werkzeug.security import generate_password_hash
 
@@ -61,7 +61,8 @@ state_name = {
 
 class Dataset():
     def __init__(self, path):
-        self.dataset_path = path
+        self.dir = os.path.dirname(os.path.abspath(__file__))
+        self.dataset = path
 
         self.post_attributes = ['poster_id', 'posted', 'date', 'time', 'state_code', 'city_id', 'duration', 'summary', 'img_url', 'lat', 'lng']
         self.city_attributes = ['name']
@@ -119,9 +120,9 @@ class Dataset():
 
         return self.user_id
 
-    def clean_dataset(self):
-        with open(self.dataset_path, 'r', newline='', encoding='utf-8') as dataset, \
-             open(path.join('tables', 'posts.csv'), 'w', newline='', encoding='utf-8') as posts:
+    def generate_tables(self):
+        with open(os.path.join(self.dir, self.dataset), 'r', newline='', encoding='utf-8') as dataset, \
+             open(os.path.join(self.dir, 'tables', 'posts.csv'), 'w', newline='', encoding='utf-8') as posts:
             
             reader = DictReader(dataset)
             writer = DictWriter(posts, fieldnames=self.post_attributes)
@@ -168,7 +169,7 @@ class Dataset():
                 if (self.post_count % 100) == 0:
                     print(f'Read {self.post_count} posts.')
 
-        with open(path.join('tables', 'states.csv'), 'w', newline='', encoding='utf-8') as file:
+        with open(os.path.join(self.dir, 'tables', 'states.csv'), 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.state_attributes)
             writer.writeheader()
             writer.writerows([{
@@ -176,18 +177,18 @@ class Dataset():
                 'name': state_name[code]
             } for code in state_name])
 
-        with open(path.join('tables', 'cities.csv'), 'w', newline='', encoding='utf-8') as file:
+        with open(os.path.join(self.dir, 'tables', 'cities.csv'), 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.city_attributes)
             writer.writeheader()
             cities_by_id = sorted(self.cities, key=self.cities.get)
             writer.writerows([{'name': city} for city in cities_by_id])
 
-        with open(path.join('tables', 'users.csv'), 'w', newline='', encoding='utf-8') as file:
+        with open(os.path.join(self.dir, 'tables', 'users.csv'), 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.user_attributes)
             writer.writeheader()
             writer.writerows(self.users)
 
-        with open(path.join('tables', 'follows.csv'), 'w', newline='', encoding='utf-8') as file:
+        with open(os.path.join(self.dir, 'tables', 'follows.csv'), 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.follows_attributes)
             writer.writeheader()
 
@@ -206,7 +207,7 @@ class Dataset():
 
             writer.writerows(follows)
 
-        with open(path.join('tables', 'ratings.csv'), 'w', newline='', encoding='utf-8') as file:
+        with open(os.path.join(self.dir, 'tables', 'ratings.csv'), 'w', newline='', encoding='utf-8') as file:
             writer = DictWriter(file, fieldnames=self.ratings_attributes)
             writer.writeheader()
 
@@ -223,5 +224,5 @@ class Dataset():
 
 
 if __name__ == '__main__':
-    dataset = Dataset('dataset_raw.csv')
-    dataset.clean_dataset()
+    dataset = Dataset('dataset.csv')
+    dataset.generate_tables()
