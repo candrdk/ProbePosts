@@ -13,12 +13,23 @@ class User(UserMixin):
         return self.user_id
     
     def __init__(self, user_data):
-        self.user_id = user_data.get('id')
-        self.display_name = user_data.get('display_name')
-        self.handle = user_data.get('handle')
-        self.password_hash = user_data.get('password_hash')
-        self.state_code = user_data.get('state_code')
-        self.city_id = user_data.get('city_id')
+        self.user_id        = user_data.get('id')
+        self.display_name   = user_data.get('display_name')
+        self.handle         = user_data.get('handle')
+        self.password_hash  = user_data.get('password_hash')
+        self.state_code     = user_data.get('state_code')
+        self.city_id        = user_data.get('city_id')
+
+    @pgdb.connect
+    def get_profile_data(db, self):
+        return {
+            'display_name': self.display_name,
+            'handle':       self.handle,
+            'state':        db.query_state_name(self.state_code),
+            'city':         db.query_city_name(self.city_id),
+            'followers':    db.query_user_follower_count(self.id),
+            'following':    db.query_user_following_count(self.id)
+        }
     
 class Post:
     def __init__(self, db, post_data, user_id=None):

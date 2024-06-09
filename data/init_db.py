@@ -25,25 +25,25 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
             cur.execute(sql.read())
 
         # Load the cities data
-        with open(os.path.join(dir, 'tables', 'cities.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'cities.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY Cities(city_name) 
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
 
         # Load the states data
-        with open(os.path.join(dir, 'tables', 'states.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'states.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY States(state_code, state_name)
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
 
         # Load the users data
-        with open(os.path.join(dir, 'tables', 'users.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'users.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY Users(display_name, handle, password_hash, state_code, city_id)
                             FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
         
         # Load the posts data
-        with open(os.path.join(dir, 'tables', 'posts.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'posts.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY Posts(poster_id, post_date, sighting_date, sighting_time, 
                                         state_code, city_id, duration, summary, image_url, 
                                         latitude, longitude)
@@ -68,13 +68,13 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
                            DROP TABLE tmp_img;''')
 
         # Load the follows relation table
-        with open(os.path.join(dir, 'tables', 'follows.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'follows.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY Follows(user_id, follows_id)
                           FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
 
         # Load the ratings relation table
-        with open(os.path.join(dir, 'tables', 'ratings.csv'), 'r') as f:
+        with open(os.path.join(dir, 'tables', 'ratings.csv'), 'r', encoding='utf-8') as f:
             with cur.copy('''COPY Ratings(user_id, post_id, rating)
                           FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())

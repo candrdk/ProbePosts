@@ -64,9 +64,13 @@ class DBConnection:
         self.cursor.execute("SELECT id FROM Users WHERE handle = %s;", (user_handle, ))
         return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
 
-    def query_posts_by_user_id(self, user_id):
-        self.dict_cursor.execute("SELECT * FROM Posts WHERE poster_id = %s ORDER BY post_date DESC;", (user_id, ))
-        return self.dict_cursor.fetchall()
+    def query_user_follower_count(self, user_id):
+        self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE follows_id = %s", (user_id, ))
+        return self.cursor.fetchone()[0]
+
+    def query_user_following_count(self, user_id):
+        self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE user_id = %s", (user_id, ))
+        return self.cursor.fetchone()[0]
 
     def insert_user(self, user):
         query = """INSERT INTO 
@@ -167,6 +171,15 @@ class DBConnection:
         else:
             return 0
         
+    def query_user_liked_posts_page(self, user_id, post_count, page_num=0):
+        query = """SELECT p.*
+                   FROM Posts p JOIN Ratings r ON p.id = r.post_id
+                   WHERE r.user_id = %s
+                   ORDER BY p.post_date DESC
+                   LIMIT %s OFFSET %s;"""
+        self.dict_cursor.execute(query, (user_id, post_count, page_num * post_count))
+        return self.dict_cursor.fetchall()
+    
     def query_state_code(self, state):
         self.cursor.execute("SELECT state_code FROM States WHERE state_name = %s;", (state, ))
         if self.cursor.rowcount == 1:
@@ -175,7 +188,6 @@ class DBConnection:
             return None
 
     def query_search_posts_page(self, q, post_count, page_num=0):
-
         # List of patterns that can be matched in a search query.
         # Kind of messy, since we have to be careful with to avoid SQL injection.
         pattern = [

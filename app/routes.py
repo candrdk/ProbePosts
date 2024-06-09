@@ -1,13 +1,14 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 
 from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from datetime import date
+
 from app import app, pgdb
 from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchForm
 from app.models import User, Post
-from datetime import date
 
 
 @app.context_processor
@@ -17,11 +18,9 @@ def inject_search_form():
 @app.before_request
 def handle_searchform_submission():
     if request.method == 'POST' and 'search' in request.form:
-            form_data = request.form['search']
-            # Redirect to a specific route or handle as needed
-            return redirect(url_for('search') + f'?q={form_data}')
-
-
+        form_data = request.form['search']
+        # Redirect to a specific route or handle as needed
+        return redirect(url_for('search') + f'?q={form_data}')
 
 
 @app.route('/')
@@ -140,24 +139,35 @@ def profile(db, handle):
     user_data = db.query_userdata_by_handle(handle)
     if user_data is None:
         flash(f'No user exists with handle @{handle}')
-        return redirect(url_for(f'/@{handle}'))
+        return redirect(url_for('index'))
     
     user = User(user_data)
 
-    profile_data = {
-        "displayname":user.display_name,
-        "handle":user.handle,
-        "state":db.query_state_name(user.state_code),
-        "city":db.query_city_name(user.city_id)
-    }
+    return render_template('profile.html', title="Profile", user=user.get_profile_data())
 
-    posts_data = db.query_posts_by_user_id(user.user_id)
+@app.route('/@<handle>/likes', methods=['GET'])
+@login_required
+@pgdb.connect
+def user_likes(db, handle):
+    user_data = db.query_userdata_by_handle(handle)
+    if user_data is None:
+        flash(f'No user exists with handle @{handle}')
+        return redirect(url_for('index'))
+    
+    user = User(user_data)
+
+    return render_template('profile.html', title="Profile", user=user.get_profile_data())
+
+
+@app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])
+@login_required
+@pgdb.connect
+def user_likes_page(db, handle, page_num):
+    user_id = db.query_user_id(handle)
+    posts_data = db.query_user_liked_posts_page(user_id, 10, page_num)
     posts = [Post(db, p, current_user.id) for p in posts_data]
+    return render_template('page.html', posts=posts)
 
-    # TODO: load profile data from url
-    # TODO: display all users posts underneath
-
-    return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
 
 @app.route('/@<handle>/page/<int:page_num>', methods=['GET'])
 @login_required
