@@ -40,8 +40,7 @@ def home_page(db, page_num):
 
 @app.route('/following')
 @login_required
-@pgdb.connect
-def following(db):
+def following():
     return render_template('feed.html', title='Following')
 
 @app.route('/following/page/<int:page_num>', methods=['GET'])
@@ -81,8 +80,7 @@ def login(db):
 
 @app.route('/logout')
 @login_required
-@pgdb.connect
-def logout(db):
+def logout():
     logout_user()
     return redirect(url_for('index'))
 
