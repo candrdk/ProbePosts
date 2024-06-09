@@ -1,5 +1,5 @@
 # ProbePosts
-Microblogging for UFO hunters. Group project for the 2024 DIS course at UCPH.
+Microblogging for UFO hunters. Group project for the 2024 DIS course at UCPH. The E/R diagram of our design can be found at the [bottom of this file](#E/R-Diagram). 
 
 ## How To Run
 Clone the repository and run the following command to install the required packages (preferably in a venv):
@@ -20,13 +20,13 @@ To fill the database with data, run the `init_db.py` script:
 ```
 $ python3 ./data/init_db.py
 ```
-This will fill the data from the `/data/tables/` csv files into their corresponding tables in the postgres database specified in the `.env` file. For more on how these csv files were generated, see the 'Generating datasets' section.
+This will fill the data from the `/data/tables/` csv files into their corresponding tables in the postgres database specified in the `.env` file. For more on how these csv files were generated, see the ['Generating Datasets'](#Generating-Datasets) section.
 
 The server can then be started with:
 ```
 $ flask run
 ```
-ProbePosts should then be available at https://localhost:5000/
+ProbePosts should then be available at https://localhost:5000/. Note that the application *does* use the internet for fetching images and the jquery library.
 
 ## Generating Datasets
 The raw UFO sightings dataset we are using for this project can be found in `/data/raw/dataset_raw.csv`. The dataset is a scrape of UFO sighting reports from https://nuforc.org and is publically available on [Kaggle](https://www.kaggle.com/datasets/joebeachcapital/ufo-sightings/data). Since image urls are not included in the dataset, we scrape them ourselves from [nuforc](https://nuforc.org) using the `/data/raw/scrape_image_urls.py` script, which generates `/data/raw/image_urls_raw.csv`.
@@ -41,44 +41,26 @@ $ py ./data/generate_tables.py
 ```
 This will generate csv files for posts, users, follow relationships, etc in the `/data/tables/` folder. Note that users, ratings and follows are randomly generated.
 
-## Using The App
-
-### Notes
-
-The application interface consists of two main columns. To the left, a list of page links, which we call *the sidebar*. To the right, we have the *content column*, on which the page will be displayed.
-
-Also note that the application *does* use the internet for fetching images and the jquery library.
-
-The E/R Diagram can be found at the [bottom of this file](#appendix).
-
-### Signing Up and Logging In
-
+# Using ProbePosts
+## Signing Up and Logging In
 When first launching the app, the only pages you can visit are the *Sign In* and the *Register* pages. Start by navigating to the *Register* page where you can fill out the form to create a user. Then navigate to *Sign In*, fill out your user information and login. You should now be on the main feed.
 
 > Note: All but one of the existing users have the the password `dis`. If you do not wish to create your own account, you can use of these accounts.
 > 
 > As an example account you can log into, use the username `FloridaMan` which has the password `Florida`.
 
-> Note: The rest of this guide will assume you are logged in.
+## Feeds
+The sidebar allows you to access two feeds: The *Home* feed is a global feed where every ProbePost is listed in chronological order. The *Following* feed will only contain posts by users that the logged into account follows.
 
-### Feeds
+## User Profiles
+If you click on the username of a post, you will be taken to the profile page of the poster. The *Profile* button in the sidebar takes you to the profile page of the logged in account. The profile page displays the display name, handle, location and follow counts of the user. You can follow a user by clicking the *follow* button on their profile page. The follow button will not appear when viewing yout own profile.
 
-The first two button in the sidebar (as well as the logo), take you to feeds. The *Home* feed is a global feed where every post will appear for you to scroll through. The *Following* feed will only contain posts, of users you follow and thus gives a more personal browing experience. You will learn how to follow users, in the next section.
+Two feeds are able to be brosed on the profile page: The posts of the user, and the posts liked by the user. You can change between these feeds using the buttons at the top of the profile feed.
 
-### User Profiles
+## Creating Posts
+If you click on *Create Post* in the sidebar, you will be taken to form where you can fill out the required information for posting a sighting on the website. Note that we only accept url's to images. It is not possible to upload images from your device to the database.
 
-If you click on any username or on *Profile* in the sidebar, you will be taken to the page of the user.
-
-At the top of the content column, we have a summary of the user. Here we display the users display name, handle, location and follower/following counts. You are able to follow a profile if you click on the *follow* button at the top right. (note that this button is not present if you're looking at your own profile)
-
-Two feeds are able to be viewed under the profile information by clicking on the corresponding labels. One for everything posted by the user, and one for everything they've liked.
-
-### Creating Posts
-
-If you click on *Create Post* in the sidebar, you will be taken to page where you can fill out the required information for posting a sighting on the website.
-
-### Searching For Posts
-
+## Searching For Posts
 Every page has a search bar at the top. This can be used to search for posts, using tags and/or plaintext. Tags are of the form `parameter:value`, and are used to narrow down your search by post metadata instead of only description text. Available tags are:
 * `before`, posted before a specified date
 * `after`, posted after a specified date
@@ -92,8 +74,7 @@ from:FloridaMan after:2023-03-04 city:Tampa strange
 ```
 This query returns all posts that are from the user `FloridaMan`, posted after `March 4th, 2023`, spotted in the city `Tampa` and has the string `strange` in its description.
 
-
-
-## Appendix
+# E/R Diagram
+The E/R diagram for the design of ProbePosts can be seen below.
 
 ![ER-Diagram](ER.png)
