@@ -160,8 +160,8 @@ class DBConnection:
     
     def query_recent_following_posts_page(self, user_id, post_count, page_num=0):
         query = """SELECT * FROM
-                   Posts JOIN (SELECT follows_id FROM Follows WHERE user_id = %s) 
-                   ON poster_id = follows_id
+                   Posts JOIN (SELECT follows_id FROM Follows WHERE user_id = %s) AS following
+                   ON poster_id = following.follows_id
                    ORDER BY post_date DESC
                    LIMIT %s OFFSET %s;"""
         self.dict_cursor.execute(query, (user_id, post_count, page_num * post_count))
