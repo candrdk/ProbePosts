@@ -26,13 +26,27 @@ def handle_searchform_submission():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', title="Home", posts=[])
+    return render_template('index.html', title="Home")
 
 @app.route('/page/<int:page_num>', methods=['GET'])
 @login_required
 @pgdb.connect
 def home_page(db, page_num):
     posts_data = db.query_recent_posts_page(10, page_num)
+    posts = [Post(db, p, current_user.id) for p in posts_data]
+    return render_template('page.html', posts=posts)
+
+@app.route('/following')
+@login_required
+@pgdb.connect
+def following(db):
+    return render_template('following.html', title='Following')
+
+@app.route('/following/page/<int:page_num>', methods=['GET'])
+@login_required
+@pgdb.connect
+def following_page(db, page_num):
+    posts_data = db.query_recent_following_posts_page(current_user.id, 10, page_num)
     posts = [Post(db, p, current_user.id) for p in posts_data]
     return render_template('page.html', posts=posts)
 
@@ -64,6 +78,7 @@ def login(db):
     return render_template('login.html', title="Sign In", form=form)
 
 @app.route('/logout')
+@login_required
 @pgdb.connect
 def logout(db):
     logout_user()
@@ -122,7 +137,7 @@ def create_post(db):
 @login_required
 def search():
     query = request.args.get('q')
-    return render_template('search.html', title="Search", posts=[], searchvalue=query)
+    return render_template('search.html', title="Search", searchvalue=query)
 
 @app.route('/search/page/<int:page_num>', methods=['GET'])
 @login_required
@@ -134,6 +149,7 @@ def search_page(db, page_num):
     return render_template('page.html', posts=posts)
 
 @app.route('/@<handle>')
+@login_required
 @pgdb.connect
 def profile(db, handle):
     user_data = db.query_userdata_by_handle(handle)
@@ -146,12 +162,14 @@ def profile(db, handle):
     return render_template('profile.html', title="Profile", user=user.get_profile_data(current_user.id))
 
 @app.route('/@<handle>/follow', methods=['GET'])
+@login_required
 @pgdb.connect
 def follow(db, handle):
     db.insert_follow(current_user.id, db.query_user_id(handle))
     return 'followed'
 
 @app.route('/@<handle>/unfollow', methods=['GET'])
+@login_required
 @pgdb.connect
 def unfollow(db, handle):
     db.delete_follow(current_user.id, db.query_user_id(handle))
@@ -169,7 +187,6 @@ def user_likes(db, handle):
     user = User(user_data)
 
     return render_template('profile.html', title="Profile", user=user.get_profile_data(current_user.id))
-
 
 @app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])
 @login_required

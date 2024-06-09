@@ -157,6 +157,15 @@ class DBConnection:
         query = "SELECT * FROM Posts ORDER BY post_date DESC LIMIT %s OFFSET %s;"
         self.dict_cursor.execute(query, (post_count, page_num * post_count))
         return self.dict_cursor.fetchall()
+    
+    def query_recent_following_posts_page(self, user_id, post_count, page_num=0):
+        query = """SELECT * FROM
+                   Posts JOIN (SELECT follows_id FROM Follows WHERE user_id = %s) 
+                   ON poster_id = follows_id
+                   ORDER BY post_date DESC
+                   LIMIT %s OFFSET %s;"""
+        self.dict_cursor.execute(query, (user_id, post_count, page_num * post_count))
+        return self.dict_cursor.fetchall()
 
     def query_recent_posts_by_user_page(self, user_id, post_count, page_num=0):
         query = "SELECT * FROM Posts WHERE poster_id = %s ORDER BY post_date DESC LIMIT %s OFFSET %s;"
