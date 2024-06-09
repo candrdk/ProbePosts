@@ -26,7 +26,7 @@ def handle_searchform_submission():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', title="Home")
+    return render_template('feed.html', title="Home")
 
 @app.route('/page/<int:page_num>', methods=['GET'])
 @login_required
@@ -40,7 +40,7 @@ def home_page(db, page_num):
 @login_required
 @pgdb.connect
 def following(db):
-    return render_template('following.html', title='Following')
+    return render_template('feed.html', title='Following')
 
 @app.route('/following/page/<int:page_num>', methods=['GET'])
 @login_required
@@ -137,7 +137,7 @@ def create_post(db):
 @login_required
 def search():
     query = request.args.get('q')
-    return render_template('search.html', title="Search", searchvalue=query)
+    return render_template('feed.html', title="Search", searchvalue=query)
 
 @app.route('/search/page/<int:page_num>', methods=['GET'])
 @login_required
