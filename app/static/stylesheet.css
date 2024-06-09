@@ -1,8 +1,6 @@
 *:focus { outline: none}
 body { background:#fff; color:#222; overflow-x: hidden; font-family: Arial, Helvetica, sans-serif; padding: 0; margin: auto; max-width: 900px; }
-a:hover {
-    text-decoration: underline;
-}
+
 a, a:visited {
     text-decoration: none;
     color: inherit;
@@ -214,6 +212,27 @@ select, input[type="text"][list] {
     font-size: 32px;
 }
 
+a.feed-button {
+    margin: 10%;
+    padding: 8px;
+    position: relative;
+    transition: 0.2s;
+}
+
+a.feed-button:hover {
+    background-color: rgb(230, 230, 230);
+}
+
+a.feed-button#selected::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: black;
+    height: 4px;
+    border-radius: 10px 10px 10px 10px;
+}
 
 /* follow button */
 button {

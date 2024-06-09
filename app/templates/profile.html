@@ -14,14 +14,14 @@
     <p class="location">Lives in: {{ user.state }}, {{ user.city }}</p>
 
     <div class="followcount">
-        <p class="following"><span>{{ user.following }}</span> following</p> 
+        <p class="following"><span>{{ user.following }}</span> following</p>
         <p class="following"><span>{{ user.followers }}</span> followers</p>      
     </div>
 
     <div>
         <h2 style="text-align: center;">
-            <a href="/@{{ user.handle }}" style="margin:10%">All posts</a>
-            <a href="/@{{ user.handle }}/likes" style="margin:10%">Liked posts</a>
+            <a class="feed-button" id="{{ 'none' if 'likes' in request.url else 'selected' }}" href="/@{{ user.handle }}">All posts</a>
+            <a class="feed-button" id="{{ 'selected' if 'likes' in request.url else 'none' }}" href="/@{{ user.handle }}/likes">Liked posts</a>
         </h2>
     </div>
     <hr style="margin-bottom: 10px">
