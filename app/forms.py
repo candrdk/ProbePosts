@@ -20,7 +20,9 @@ class RegistrationForm(FlaskForm):
     password_repeat = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     state           = SelectField('State', validators=[Optional()], choices=([('', '---')] + get_states()))
     city            = StringField('City', validators=[Optional(), Length(min=2, max=64)])
-    submit = SubmitField('Register')
+    submit          = SubmitField('Register')
+    
+    city_id         = None
     
     def validate_handle(self, handle):
         with pgdb.connection() as db:
