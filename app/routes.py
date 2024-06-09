@@ -143,14 +143,7 @@ def profile(db, handle):
     
     user = User(user_data)
 
-    profile_data = {
-        "displayname":user.display_name,
-        "handle":user.handle,
-        "state":db.query_state_name(user.state_code),
-        "city":db.query_city_name(user.city_id)
-    }
-
-    return render_template('profile.html', title="Profile", user=profile_data)
+    return render_template('profile.html', title="Profile", user=user.get_profile_data())
 
 @app.route('/@<handle>/likes', methods=['GET'])
 @login_required
@@ -163,14 +156,7 @@ def user_likes(db, handle):
     
     user = User(user_data)
 
-    profile_data = {
-        "displayname": user.display_name,
-        "handle": user.handle,
-        "state": db.query_state_name(user.state_code),
-        "city": db.query_city_name(user.city_id)
-    }
-
-    return render_template('profile.html', title="Profile", user=profile_data)
+    return render_template('profile.html', title="Profile", user=user.get_profile_data())
 
 
 @app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])

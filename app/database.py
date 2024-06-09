@@ -64,6 +64,14 @@ class DBConnection:
         self.cursor.execute("SELECT id FROM Users WHERE handle = %s;", (user_handle, ))
         return self.cursor.fetchone()[0] if self.cursor.rowcount == 1 else None
 
+    def query_user_follower_count(self, user_id):
+        self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE follows_id = %s", (user_id, ))
+        return self.cursor.fetchone()[0]
+
+    def query_user_following_count(self, user_id):
+        self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE user_id = %s", (user_id, ))
+        return self.cursor.fetchone()[0]
+
     def insert_user(self, user):
         query = """INSERT INTO 
         Users(display_name, handle, password_hash, state_code, city_id)
@@ -180,7 +188,6 @@ class DBConnection:
             return None
 
     def query_search_posts_page(self, q, post_count, page_num=0):
-
         # List of patterns that can be matched in a search query.
         # Kind of messy, since we have to be careful with to avoid SQL injection.
         pattern = [

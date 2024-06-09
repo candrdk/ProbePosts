@@ -1,10 +1,12 @@
 {% extends "feed.html" %}
 
 {% block header %}
-    <h1 class="profiletitle">{{ user.displayname }}</h1>
+    <h1 class="profiletitle">{{ user.display_name }}</h1>
     <p class="handle">@{{ user.handle }}</p>
 
     <p class="location">{{ user.state }}, {{ user.city }}</p>
+
+    <p class="following">{{ user.following }} following {{ user.followers }} followers</p>
     
     <hr style="margin-bottom:-0.5em">
     <div>
@@ -15,5 +17,3 @@
     </div>
     <hr>
 {% endblock %}
-
-
