@@ -4,10 +4,10 @@ Microblogging for UFO hunters.
 TODO: longer description
 
 <p float="middle">
-	<img src="/search.png" width="400" />
-	<img src="/register.png" width="400" />
-	<img src="/following.png" width="400" />
-	<img src="/profile.png" width="400" />
+	<img src="/screenshots/search.png" width="400" />
+	<img src="/screenshots/register.png" width="400" />
+	<img src="/screenshots/following.png" width="400" />
+	<img src="/screenshots/profile.png" width="400" />
 </p>
 
 # How to run
