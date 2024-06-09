@@ -1,22 +1,28 @@
 {% extends "feed.html" %}
 
 {% block header %}
-    <h1 class="profiletitle">{{ user.display_name }}</h1>
-    <p class="handle">@{{ user.handle }}</p>
+    <div class="profileheader">
+        <div>
+            <h1 class="profiletitle">{{ user.display_name }}</h1>
+            <p class="handle">@{{ user.handle }}</p>
+        </div>
+        <button type="button" class="follow">
+            <span>Follow</span>
+        </button>
+    </div>
 
-    <p class="location">{{ user.state }}, {{ user.city }}</p>
+    <p class="location">Lives in: {{ user.state }}, {{ user.city }}</p>
 
-    <p class="following">{{ user.following }} following {{ user.followers }} followers</p>
-    
-    <button type="button" class="follow">
-        <span>Follow</span>
-    </button>
-    <hr style="margin-bottom:-0.5em">
+    <div class="followcount">
+        <p class="following"><span>{{ user.following }}</span> following</p> 
+        <p class="following"><span>{{ user.followers }}</span> followers</p>      
+    </div>
+
     <div>
         <h2 style="text-align: center;">
             <a href="/@{{ user.handle }}" style="margin:10%">All posts</a>
             <a href="/@{{ user.handle }}/likes" style="margin:10%">Liked posts</a>
         </h2>
     </div>
-    <hr>
+    <hr style="margin-bottom: 10px">
 {% endblock %}

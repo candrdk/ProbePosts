@@ -202,21 +202,29 @@ select, input[type="text"][list] {
     margin-bottom: 40px;
 }
 
+/* profile styles */
+
+.profileheader {
+    display: grid;
+    grid-template-columns: auto min-content;
+}
+
 .profiletitle {
     margin-bottom: 0;
+    font-size: 32px;
 }
 
 
 /* follow button */
-
 button {
     background-color:black;
     color:white;
     border: 2px solid black;
-    min-height: 36px;
-    min-width: 100px;
-    padding-left: 16px;
-    padding-right: 16px;
+    height: 40px;
+    min-width: 130px;
+    padding: 0 16px;
+    margin-bottom: 20px;
+    font-size: 16px;
 }
 
 button.follow:hover {
@@ -238,4 +246,19 @@ button.unfollow:hover span {
 
 button.unfollow:hover:before {
     content: "Unfollow";
+}
+
+/* follow styling */
+.followcount {
+    margin: 15px 0 60px 0;
+}
+.followcount > p {
+    display: inline;
+    color: grey;
+    text-transform: capitalize;
+    padding-right: 10px;
+}
+.followcount > p > span {
+    color: black;
+    font-weight: bold;
 }
