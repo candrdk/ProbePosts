@@ -143,7 +143,19 @@ def profile(db, handle):
     
     user = User(user_data)
 
-    return render_template('profile.html', title="Profile", user=user.get_profile_data())
+    return render_template('profile.html', title="Profile", user=user.get_profile_data(current_user.id))
+
+@app.route('/@<handle>/follow', methods=['GET'])
+@pgdb.connect
+def follow(db, handle):
+    db.insert_follow(current_user.id, db.query_user_id(handle))
+    return 'followed'
+
+@app.route('/@<handle>/unfollow', methods=['GET'])
+@pgdb.connect
+def unfollow(db, handle):
+    db.delete_follow(current_user.id, db.query_user_id(handle))
+    return 'unfollowed'
 
 @app.route('/@<handle>/likes', methods=['GET'])
 @login_required
@@ -156,7 +168,7 @@ def user_likes(db, handle):
     
     user = User(user_data)
 
-    return render_template('profile.html', title="Profile", user=user.get_profile_data())
+    return render_template('profile.html', title="Profile", user=user.get_profile_data(current_user.id))
 
 
 @app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])

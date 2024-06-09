@@ -21,19 +21,22 @@
     <!-- FOR FOLLOW BUTTON -->
     <script type="text/javascript">
         $(document).ready(function() {
-            $("button.follow").click(function() {
-            var following = $(this).hasClass('follow');
-            
-            if (following) {
-                $(this).removeClass('follow')
-                        .addClass('unfollow')
-                        .find('span').text('Following');
-            }
-            else {
-                $(this).removeClass('unfollow')
-                        .addClass('follow')
-                        .find('span').text('Follow');
-            }
+            $("#follow-button").click(function() {
+                var $btn = $(this);
+                var action = $(this).hasClass('follow') ? 'follow' : 'unfollow';
+
+                $.get(document.location.href + '/' + action, function(data) {
+                    if (data == 'followed') {
+                        $btn.removeClass('follow')
+                            .addClass('unfollow')
+                            .find('span').text('Following');
+                    }
+                    else {
+                        $btn.removeClass('unfollow')
+                            .addClass('follow')
+                            .find('span').text('Follow');
+                    }
+                });
             });
         });
     </script>

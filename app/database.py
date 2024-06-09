@@ -72,11 +72,27 @@ class DBConnection:
         self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE user_id = %s", (user_id, ))
         return self.cursor.fetchone()[0]
 
+    def query_user_follows(self, user_id, follows_id):
+        self.cursor.execute("SELECT COUNT(*) FROM Follows WHERE user_id = %s AND follows_id = %s", (user_id, follows_id))
+        return self.cursor.fetchone()[0] != 0
+
     def insert_user(self, user):
         query = """INSERT INTO 
         Users(display_name, handle, password_hash, state_code, city_id)
         VALUES (%s, %s, %s, %s, %s);"""
         self.cursor.execute(query, (user.display_name, user.handle, user.password_hash, user.state_code, user.city_id))
+        self.conn.commit()
+
+    def insert_follow(self, user_id, follows_id):
+        query = """INSERT INTO Follows(user_id, follows_id)
+                   VALUES(%s, %s)"""
+        self.cursor.execute(query, (user_id, follows_id))
+        self.conn.commit()
+
+    def delete_follow(self, user_id, follows_id):
+        query = """DELETE FROM Follows
+                   WHERE user_id = %s AND follows_id = %s"""
+        self.cursor.execute(query, (user_id, follows_id))
         self.conn.commit()
     
     def insert_post(self, post):

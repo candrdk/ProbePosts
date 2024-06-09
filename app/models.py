@@ -21,14 +21,15 @@ class User(UserMixin):
         self.city_id        = user_data.get('city_id')
 
     @pgdb.connect
-    def get_profile_data(db, self):
+    def get_profile_data(db, self, user_id):
         return {
             'display_name': self.display_name,
             'handle':       self.handle,
             'state':        db.query_state_name(self.state_code),
             'city':         db.query_city_name(self.city_id),
             'followers':    db.query_user_follower_count(self.id),
-            'following':    db.query_user_following_count(self.id)
+            'following':    db.query_user_following_count(self.id),
+            'follows':      db.query_user_follows(user_id, self.id)
         }
     
 class Post:
