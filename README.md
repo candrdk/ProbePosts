@@ -3,7 +3,12 @@ Microblogging for UFO hunters.
 
 TODO: longer description
 
-![Screenshot of the ProbePosts home page](screenshot.png)
+<p float="middle">
+	<img src="/search.png" width="256" />
+	<img src="/register.png" width="256" />
+	<img src="/following.png" width="256" />
+	<img src="/profile.png" width="256" />
+</p>
 
 # How to run
 Clone the repository and run the following command to install the required packages (preferably in a venv):
