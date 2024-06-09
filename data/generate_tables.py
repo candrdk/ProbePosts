@@ -79,7 +79,7 @@ class Dataset():
             {
                 'display_name': 'Florida Man 🦅',
                 'handle': 'FloridaMan',
-                'password_hash': generate_password_hash('ProbeMeDaddy'),
+                'password_hash': generate_password_hash('Florida'),
                 'city_id': self.city_id,
                 'state_code': 'FL'
             }
