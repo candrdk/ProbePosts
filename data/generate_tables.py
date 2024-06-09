@@ -192,10 +192,11 @@ class Dataset():
             writer = DictWriter(file, fieldnames=self.follows_attributes)
             writer.writeheader()
 
-            follows = []
-            for user_id in range(1, len(self.users)):
+            # Everybody follows @FloridaMan
+            follows = [ {'user_id': user, 'follows_id': 1} for user in range(2, self.user_id)]
+            for user_id in range(2, len(self.users)):
                 count = randint(1, 20)
-                following = set([randint(1, self.user_id) for i in range(count)])
+                following = set([randint(2, self.user_id) for i in range(count)])
                 following.discard(user_id)
                 follows += [
                     {
