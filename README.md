@@ -1,5 +1,5 @@
 # ProbePosts
-Microblogging for UFO hunters. Group project for the 2024 DIS course at UCPH. The E/R diagram of our design can be found at the [bottom of this file](#E/R-Diagram). 
+Microblogging for UFO hunters. Group project for the 2024 DIS course at UCPH. The E/R diagram of our design can be found at the [bottom of this file](#er-diagram). 
 
 ## How To Run
 Clone the repository and run the following command to install the required packages (preferably in a venv):
@@ -20,7 +20,7 @@ To fill the database with data, run the `init_db.py` script:
 ```
 $ python3 ./data/init_db.py
 ```
-This will fill the data from the `/data/tables/` csv files into their corresponding tables in the postgres database specified in the `.env` file. For more on how these csv files were generated, see the ['Generating Datasets'](#Generating-Datasets) section.
+This will fill the data from the `/data/tables/` csv files into their corresponding tables in the postgres database specified in the `.env` file. For more on how these csv files were generated, see the ['Generating Datasets'](#generating-datasets) section.
 
 The server can then be started with:
 ```
