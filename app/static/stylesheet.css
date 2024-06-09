@@ -18,11 +18,7 @@ body p { line-height: 16px; font-size:16px; margin-top: 0px; word-wrap: break-wo
 body img { width: 100%; max-height: 512px; object-fit: contain;}
 
 
-
-/* .sidebar img {
-    position: relative;
-} */
-
+/* ProbePost logo */
 .logocon {
     position: relative;
     aspect-ratio: 3.5 / 1;
@@ -47,14 +43,7 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
 }
 
 
-
-/* Modular */
-.inline { margin: 0; }
-.inline + * { margin-top: 4px; }
-.faded { opacity: 40%; }
-.capital { text-transform: capitalize; }
-
-
+/* main page layout, third column is not used */
 .container {
     display: grid;
     grid-template-columns: 1fr 2.5fr 1fr;
@@ -64,12 +53,17 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     padding-top: 50px;
 }
 
+/* sidebar */
 .sidebar {
     position: sticky;
     align-self: self-start;
     top: 0;
     left: 0;
 }
+
+
+
+/* Post styling */
 
 .post {
     background-color: #fff;
@@ -79,10 +73,12 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     background-color:#eee;
 }
 
-.location > a, .location > a:visited {
-    color:blue;
+/* post description layout, 1 big column for content, a small for votes */
+.body {
+    display: grid;
+    grid-template-columns: 1fr 20px;
+    gap: 0 10px;
 }
-
 
 .name {
     margin-block-start: 0;
@@ -97,6 +93,16 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     padding-top: 10px;
 }
 
+.location, .spotted {
+    font-size: 12px;
+    margin-bottom: 0;
+    color: #888;
+}
+
+.location > a, .location > a:visited {
+    color:blue;
+}
+
 .posted, .handle {
     font-size: 15px;
     font-weight: normal;
@@ -108,6 +114,9 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     float: right;
 }
 
+
+/* votes */
+
 .votecon {
     width: 100%;
     font-size: 12px;
@@ -117,15 +126,16 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     padding-left: 10px;
 }
 
-.location, .spotted {
-    font-size: 12px;
-    margin-bottom: 0;
-    color: #888;
+.vote {
+    user-select: none;
+    cursor: pointer; /* Show pointer cursor on hover */
 }
 
 
+/* Forms */
+
 textarea {
-    resize: none
+    resize: none;
 }
 
 input[type=text], input[type=password], input[type=datetime-local], input[type=url], textarea {
@@ -145,9 +155,28 @@ input[type=submit] {
     background-color: #eee;
     box-sizing: border-box;
 }
+
 input[type=submit]:hover {
     cursor: pointer;
 }
+
+select, input[type="text"][list] {
+    width: 100%;
+    background-color: #eee;
+    margin: 8px 0;
+    padding: 4px 4px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1;
+    column-gap: 10px;
+}
+
+/* Search bar */
 
 .search {
     display: grid;
@@ -157,22 +186,7 @@ input[type=submit]:hover {
 }
 
 
-.selects {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1;
-    column-gap: 10px;
-}
-
-
-select {
-    width: 100%;
-    background-color: #eee;
-    margin: 8px 0;
-    padding: 4px 4px;
-    border: none;
-    box-sizing: border-box;
-}
+/* Error notifications */
 
 .errors:has(*) {
     background-color: #ff9c9c;
@@ -192,13 +206,36 @@ select {
     margin-bottom: 0;
 }
 
-.body {
-    display: grid;
-    grid-template-columns: 1fr 20px;
-    gap: 0 10px;
+
+/* follow button */
+
+button {
+    background-color:black;
+    color:white;
+    border: 2px solid black;
+    min-height: 36px;
+    min-width: 100px;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
-.vote {
-    user-select: none;
-    cursor: pointer; /* Show pointer cursor on hover */
+button.follow:hover {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button.unfollow:hover {
+    border: none;
+    background-color: rgb(244, 33, 46);
+    cursor: pointer;
+}
+
+button.unfollow:hover span {
+    display: none;
+}
+
+button.unfollow:hover:before {
+    content: "Unfollow";
 }

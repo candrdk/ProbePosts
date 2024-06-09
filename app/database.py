@@ -191,7 +191,9 @@ class DBConnection:
         # List of patterns that can be matched in a search query.
         # Kind of messy, since we have to be careful with to avoid SQL injection.
         pattern = [
-            (r'state:(\w+)'               , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('statec_code'), value=sql.Literal(self.query_state_code(x.title())))),
+            (r'state:"((\w+| )*)"'        , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('state_code'),  value=sql.Literal(self.query_state_code(x.title())))),
+            (r'state:(\w+)'               , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('state_code'),  value=sql.Literal(self.query_state_code(x.title())))),
+            (r'city:"((\w+| )*)"'         , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('city_id'),     value=sql.Literal(self.query_city_id(x.title())))),
             (r'city:(\w+)'                , lambda x: sql.SQL('{field} = {value}').format(field=sql.Identifier('city_id'),     value=sql.Literal(self.query_city_id(x.title())))),
             (r'before:(\d{4}-\d{2}-\d{2})', lambda x: sql.SQL('{field} < {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
             (r'after:(\d{4}-\d{2}-\d{2})' , lambda x: sql.SQL('{field} > {value}').format(field=sql.Identifier('post_date'),   value=sql.Literal(datetime.strptime(x, '%Y-%m-%d')))),
