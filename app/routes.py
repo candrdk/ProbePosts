@@ -1,14 +1,14 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 
 from urllib.parse import urlsplit
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from datetime import date
+
 from app import app, pgdb
 from app.forms import LoginForm, RegistrationForm, CreatePostForm, CreateSearchForm
 from app.models import User, Post
-from app.database import DBConnection
-from datetime import date
 
 
 @app.context_processor
@@ -18,11 +18,9 @@ def inject_search_form():
 @app.before_request
 def handle_searchform_submission():
     if request.method == 'POST' and 'search' in request.form:
-            form_data = request.form['search']
-            # Redirect to a specific route or handle as needed
-            return redirect(url_for('search') + f'?q={form_data}')
-
-
+        form_data = request.form['search']
+        # Redirect to a specific route or handle as needed
+        return redirect(url_for('search') + f'?q={form_data}')
 
 
 @app.route('/')
@@ -141,7 +139,7 @@ def profile(db, handle):
     user_data = db.query_userdata_by_handle(handle)
     if user_data is None:
         flash(f'No user exists with handle @{handle}')
-        return redirect(url_for(f'/@{handle}'))
+        return redirect(url_for('index'))
     
     user = User(user_data)
 
@@ -152,39 +150,27 @@ def profile(db, handle):
         "city":db.query_city_name(user.city_id)
     }
 
-    posts_data = db.query_posts_by_user_id(user.user_id)
-    posts = [Post(db, p, current_user.id) for p in posts_data]
-
-    # TODO: load profile data from url
-    # TODO: display all users posts underneath
-
-    return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
+    return render_template('profile.html', title="Profile", user=profile_data)
 
 @app.route('/@<handle>/likes', methods=['GET'])
 @login_required
 @pgdb.connect
-def user_likes(db: DBConnection, handle):
+def user_likes(db, handle):
     user_data = db.query_userdata_by_handle(handle)
     if user_data is None:
         flash(f'No user exists with handle @{handle}')
-        return redirect(url_for(f'/@{handle}'))
+        return redirect(url_for('index'))
     
     user = User(user_data)
 
     profile_data = {
-        "displayname":user.display_name,
-        "handle":user.handle,
-        "state":db.query_state_name(user.state_code),
-        "city":db.query_city_name(user.city_id)
+        "displayname": user.display_name,
+        "handle": user.handle,
+        "state": db.query_state_name(user.state_code),
+        "city": db.query_city_name(user.city_id)
     }
 
-    posts_data = db.query_user_liked_posts(user.user_id)
-    posts = [Post(db, p, current_user.id) for p in posts_data]
-
-    # TODO: load profile data from url
-    # TODO: display all users posts underneath
-
-    return render_template('profile.html', title="Profile", user=profile_data, posts=posts)
+    return render_template('profile.html', title="Profile", user=profile_data)
 
 
 @app.route('/@<handle>/likes/page/<int:page_num>', methods=['GET'])
