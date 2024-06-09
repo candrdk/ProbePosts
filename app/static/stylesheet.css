@@ -59,6 +59,17 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     left: 0;
 }
 
+.sidebar > a > h2 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 0 0 0 0;
+    transition: 0.2s;
+}
+
+.sidebar > a > h2:hover {
+    background-color: rgb(230, 230, 230);
+    padding-left: 5px;
+}
 
 
 /* Post styling */
@@ -143,6 +154,7 @@ input[type=text], input[type=password], input[type=datetime-local], input[type=u
     background-color: #eee;
     border: none;
     box-sizing: border-box;
+    border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 input[type=submit] {
@@ -152,10 +164,13 @@ input[type=submit] {
     border: none;
     background-color: #eee;
     box-sizing: border-box;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    transition: 0.2s;
 }
 
 input[type=submit]:hover {
     cursor: pointer;
+    border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 select, input[type="text"][list] {
@@ -165,6 +180,7 @@ select, input[type="text"][list] {
     padding: 4px 4px;
     border: none;
     box-sizing: border-box;
+    border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
 .selects {

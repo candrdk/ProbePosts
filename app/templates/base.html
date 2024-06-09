@@ -18,15 +18,15 @@
             
             <hr>
             {% if current_user.is_anonymous %}
-                <h2><a href="{{ url_for('login') }}">Sign in</a></h2>
-                <h2><a href="{{ url_for('register') }}">Register</a></h2>
+                <a href="{{ url_for('login') }}"><h2>Sign in</h2></a>
+                <a href="{{ url_for('register') }}"><h2>Register</h2></a>
             {% else %}
-                <h2><a href="/">Home</a></h2>
-                <h2><a href="/following">Following</a></h2>
-                <h2><a href="/@{{ current_user.handle }}">Profile</a></h2>
-                <h2><a href="{{ url_for('create_post') }}">Create Post</a></h2>
+                <a href="/"><h2>Home</h2></a>
+                <a href="/following"><h2>Following</h2></a>
+                <a href="/@{{ current_user.handle }}"><h2>Profile</h2></a>
+                <a href="{{ url_for('create_post') }}"><h2>Create Post</h2></a>
                 <hr>
-                <h2><a href="{{ url_for('logout') }}">Logout</a></h2>
+                <a href="{{ url_for('logout') }}"><h2>Logout</h2></a>
             {% endif %}
 
         </div>
