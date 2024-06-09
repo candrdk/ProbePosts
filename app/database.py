@@ -41,8 +41,8 @@ class PostgresDB:
 class DBConnection:
     def __init__(self, conn):
         self.conn = conn
-        self.cursor:cursor.Cursor = self.conn.cursor()
-        self.dict_cursor:Cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
+        self.cursor = self.conn.cursor()
+        self.dict_cursor = self.conn.cursor(row_factory=psycopg.rows.dict_row)
 
     def query_userdata_by_id(self, id):
         self.dict_cursor.execute("SELECT * FROM Users WHERE id = %s;", (id, ))
