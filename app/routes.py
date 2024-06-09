@@ -24,9 +24,11 @@ def handle_searchform_submission():
 
 
 @app.route('/')
-@login_required
 def index():
-    return render_template('feed.html', title="Home")
+    if current_user.is_authenticated:
+        return render_template('feed.html', title="Home")
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/page/<int:page_num>', methods=['GET'])
 @login_required

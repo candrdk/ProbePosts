@@ -23,6 +23,7 @@ class User(UserMixin):
     @pgdb.connect
     def get_profile_data(db, self, user_id):
         return {
+            'id':           self.user_id,
             'display_name': self.display_name,
             'handle':       self.handle,
             'state':        db.query_state_name(self.state_code),

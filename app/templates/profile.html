@@ -6,9 +6,11 @@
             <h1 class="profiletitle">{{ user.display_name }}</h1>
             <p class="handle">@{{ user.handle }}</p>
         </div>
-        <button type="button" class="{{ 'unfollow' if user.follows else 'follow' }}" id="follow-button">
-            <span>{{ 'Following' if user.follows else 'Follow' }}</span>
-        </button>
+        {% if current_user.id != user.id %}
+            <button type="button" class="{{ 'unfollow' if user.follows else 'follow' }}" id="follow-button">
+                <span>{{ 'Following' if user.follows else 'Follow' }}</span>
+            </button>
+        {% endif %}
     </div>
 
     <p class="location">Lives in: {{ user.state }}, {{ user.city }}</p>
