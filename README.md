@@ -1,6 +1,8 @@
 # ProbePosts
 Microblogging for UFO hunters. Group project for the 2024 DIS course at UCPH. The E/R diagram of our design can be found at the [bottom of this file](#er-diagram). 
 
+A live service is available for the duration of the course at http://probeposts.friddo.dk/
+
 ## How To Run
 Clone the repository and run the following command to install the required packages (preferably in a venv):
 ```
