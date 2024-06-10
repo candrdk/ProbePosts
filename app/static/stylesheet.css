@@ -46,6 +46,12 @@ body img { width: 100%; max-height: 512px; object-fit: contain;}
     display: grid;
     grid-template-columns: 1fr 2.5fr 1fr;
 }
+@media only screen and (max-width: 750px) {
+    .container {
+        grid-template-columns: 1fr 2.5fr;
+    }
+}
+
 .container > div {
     margin: 0px 20px 20px 20px;
     padding-top: 50px;
