@@ -34,7 +34,7 @@ CREATE TABLE Posts(
     city_id INTEGER REFERENCES Cities(id),
     duration VARCHAR(128) NOT NULL,
     summary VARCHAR(512) NOT NULL,
-    image_url VARCHAR(512),
+    image_url VARCHAR(1024),
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL
 );

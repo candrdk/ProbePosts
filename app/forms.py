@@ -37,7 +37,7 @@ class RegistrationForm(FlaskForm):
 
 class CreatePostForm(FlaskForm):
     summary = TextAreaField('Summary of sighting', validators=[DataRequired(), Length(max=512, message="Maximum 512 characters allowed")])
-    imageUrl = URLField('URL of image', validators=[Optional(), Length(max=512)])
+    imageUrl = URLField('URL of image', validators=[Optional(), Length(max=1024)])
     sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     sightingDuration = StringField("The duration of the sighting", validators=[DataRequired(), Length(max=128)])
 
@@ -51,7 +51,7 @@ class CreatePostForm(FlaskForm):
 
     def validate_imageUrl(self, imageUrl):
         valid_extensions = ['png', 'jpg', 'jpeg']
-        extension = imageUrl[-5:].split('.')[-1]
+        extension = imageUrl.data[-5:].split('.')[-1]
         if extension not in valid_extensions:
             raise ValidationError('Image url must be a .png, .jpg or .jpeg')
 
