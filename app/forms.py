@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField, SelectField, FloatField, URLField, DateTimeLocalField
 from wtforms.validators import DataRequired, EqualTo, ValidationError, Optional, Length
 
+import requests
+
 from app import pgdb
 
 class LoginForm(FlaskForm):
@@ -37,7 +39,7 @@ class RegistrationForm(FlaskForm):
 
 class CreatePostForm(FlaskForm):
     summary = TextAreaField('Summary of sighting', validators=[DataRequired(), Length(max=512, message="Maximum 512 characters allowed")])
-    imageUrl = URLField('URL of image', validators=[Optional(), Length(max=1024)])
+    imageUrl = URLField('URL of image', validators=[Optional(), Length(max=512)])
     sightingDateTime = DateTimeLocalField("Sighting Date and time", validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     sightingDuration = StringField("The duration of the sighting", validators=[DataRequired(), Length(max=128)])
 
@@ -50,10 +52,8 @@ class CreatePostForm(FlaskForm):
     post = SubmitField('Post sighting')
 
     def validate_imageUrl(self, imageUrl):
-        valid_extensions = ['png', 'jpg', 'jpeg']
-        extension = imageUrl.data[-5:].split('.')[-1]
-        if extension not in valid_extensions:
-            raise ValidationError('Image url must be a .png, .jpg or .jpeg')
+        if not requests.head(imageUrl.data).headers['Content-Type'].startswith('image'):
+            raise ValidationError('URL must link to an image!')
 
     # Set form data to city id. If city name not in database, it is inserted.
     def validate_city(self, city):

@@ -55,7 +55,7 @@ with psycopg.connect(connection_string, options="-c datestyle=ISO,DMY") as conn:
         # urls up from the posts.csv file like this to avoid having to scrape 
         # all urls every time we want to change the rest of the dataset.
         with open(os.path.join(dir, 'image_urls.csv'), 'r') as f:
-            cur.execute('CREATE TEMP TABLE tmp_img (id SERIAL, image_url VARCHAR(1024));')
+            cur.execute('CREATE TEMP TABLE tmp_img (id SERIAL, image_url VARCHAR(512));')
 
             with cur.copy('''COPY tmp_img(image_url) FROM STDIN DELIMITER ',' CSV HEADER;''') as copy:
                 copy.write(f.read())
